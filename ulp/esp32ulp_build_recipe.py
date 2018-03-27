@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# compile ulp files in Arduino enviroment.
+# compile ulp files in Arduino enviroment
 
 import os
 import sys
@@ -278,7 +278,7 @@ def gen_binutils_as_cmd(build_path, platform_path, file, board_options):
 
 #########################################################################################################
 def gen_xtensa_ld_cmd(build_path, platform_path, file, board_options):
-    
+    ## ToDo: make path platform independent
     cmds = gen_cmds(platform_path + "/tools")
     file_names = gen_file_names(file[0])
     LIBRARIES = []
