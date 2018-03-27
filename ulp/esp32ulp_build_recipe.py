@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# compile ulp files in Arduino enviroment
+# compile ulp files in Arduino enviroment.
 
 import os
 import sys
@@ -7,7 +7,7 @@ import glob
 import shlex
 import optparse
 import subprocess
-
+## ToDo: make paths platform independent
 CPREPROCESSOR_FLAGS = dict()
 CPREPROCESSOR_FLAGS['app_trace']            = "/sdk/include/app_trace "
 CPREPROCESSOR_FLAGS['app_update']           = "/sdk/include/app_update "
@@ -109,25 +109,23 @@ def main(argv):
     board_options.append("-DARDUINO_ARCH_" + options.darduino_arch)
     board_options.append("-DARDUINO_BOARD=" + options.darduino_board)
     board_options.append("-DARDUINO_VARIANT=" + options.darduino_variant)
-
+    ## ToDo: make path platform independent
     os.chdir(options.bpath + "/sketch/")
 
-    ulp_files = glob.glob('*.s')
+ulp_files = glob.glob('*.s')
     if not ulp_files:
         print "No ULP Assembly File(s) Detected..."
-        f= open("ulp_main.ld","w+")
-    else:
-        build_ulp(options.bpath, options.ppath, ulp_files, board_options)
-
+        f = open("ulp_main.ld","w+")
+else:
+    build_ulp(options.bpath, options.ppath, ulp_files, board_options)
+    
     sys.exit(0)
 
 #########################################################################################################
 def build_ulp(build_path, platform_path, ulp_sfiles, board_options):
     print "ULP Assembly File(s) Detected: " + str(ulp_sfiles)
-    #sys.stdout.write(msg)
-    #sys.stdout.flush()
-    #print "ULP ASSEMBLY FILE(s) DETECTED: ", ulp_sfiles
     console_string = ""
+    ## ToDo: make path platform independent
     cmds = gen_cmds(platform_path + "/tools")
     for file in ulp_sfiles:
         file = file.split(".")
@@ -142,7 +140,7 @@ def build_ulp(build_path, platform_path, ulp_sfiles, board_options):
             sys.exit(error_string)
         else:
             console_string = cmd[0] + '\n'
-
+        
         ## Run preprocessed assembly sources through assembler
         cmd = gen_binutils_as_cmd(build_path, platform_path, file, board_options)
         proc = subprocess.Popen(cmd[1],stdout=subprocess.PIPE,stderr=subprocess.STDOUT,shell=False)
@@ -152,7 +150,7 @@ def build_ulp(build_path, platform_path, ulp_sfiles, board_options):
             sys.exit(error_string)
         else:
             console_string += cmd[0] + '\n'
-
+        
         ## Run linker script template through C preprocessor
         cmd = gen_xtensa_ld_cmd(build_path, platform_path, file, board_options)
         proc = subprocess.Popen(cmd[1],stdout=subprocess.PIPE,stderr=subprocess.STDOUT,shell=False)
@@ -162,7 +160,7 @@ def build_ulp(build_path, platform_path, ulp_sfiles, board_options):
             sys.exit(error_string)
         else:
             console_string += cmd[0] + '\n'
-
+        
         ## Link object files into an output ELF file
         cmd = gen_binutils_ld_cmd(build_path, platform_path, file, board_options)
         proc = subprocess.Popen(cmd[1],stdout=subprocess.PIPE,stderr=subprocess.STDOUT,shell=False)
@@ -172,8 +170,9 @@ def build_ulp(build_path, platform_path, ulp_sfiles, board_options):
             sys.exit(error_string)
         else:
             console_string += cmd[0] + '\n'
-
+        
         ## Generate list of global symbols
+        ## ToDo: need to use 'shell=false' for security reasons. Problem with unix pipe cmd '>'
         cmd = cmds['ulp_nm'] + " -g -f posix " + file_names['elf'] + " > " + file_names['sym']
         proc = subprocess.Popen(cmd,stdout=subprocess.PIPE,stderr=subprocess.STDOUT,shell=True)
         (out, err) = proc.communicate()
@@ -182,7 +181,7 @@ def build_ulp(build_path, platform_path, ulp_sfiles, board_options):
             sys.exit(error_string)
         else:
             console_string += cmd + '\n'
-
+        
         ## Create LD export script and header file
         cmd = gen_mapgen_cmd(build_path, platform_path, file, board_options)
         proc = subprocess.Popen(cmd[1],stdout=subprocess.PIPE,stderr=subprocess.STDOUT,shell=False)
@@ -192,7 +191,7 @@ def build_ulp(build_path, platform_path, ulp_sfiles, board_options):
             sys.exit(error_string)
         else:
             console_string += cmd[0] + '\n'
-
+        
         ## Add the generated binary to the list of binary files
         cmd = gen_binutils_objcopy_cmd(build_path, platform_path, file, board_options)
         proc = subprocess.Popen(cmd[1],stdout=subprocess.PIPE,stderr=subprocess.STDOUT,shell=False)
@@ -202,7 +201,7 @@ def build_ulp(build_path, platform_path, ulp_sfiles, board_options):
             sys.exit(error_string)
         else:
             console_string += cmd[0] + '\n'
-
+        
         ## Add the generated binary to the list of binary files
         cmd = gen_xtensa_objcopy_cmd(build_path, platform_path, file, board_options)
         proc = subprocess.Popen(cmd[1],stdout=subprocess.PIPE,stderr=subprocess.STDOUT,shell=False)
@@ -222,17 +221,19 @@ def build_ulp(build_path, platform_path, ulp_sfiles, board_options):
             sys.exit(error_string)
         else:
             console_string += cmd[0]
-                
+        
         print console_string
     
     return 0
 
 #########################################################################################################
 def gen_xtensa_preprocessor_cmd(build_path, platform_path, file, board_options):
+    ## ToDo: make path platform independent
     cmds = gen_cmds(platform_path + "/tools")
     file_names = gen_file_names(file[0])
     LIBRARIES = []
     for flag in CPREPROCESSOR_FLAGS:
+        ## ToDo: make path platform independent
         path = platform_path + "/tools" + CPREPROCESSOR_FLAGS[flag]
         LIBRARIES.append("-I")
         LIBRARIES.append(path.strip())
@@ -254,6 +255,7 @@ def gen_xtensa_preprocessor_cmd(build_path, platform_path, file, board_options):
     XTENSA_GCC_PREPROCESSOR.extend(LIBRARIES)
     XTENSA_GCC_PREPROCESSOR.extend(board_options)
     XTENSA_GCC_PREPROCESSOR.append(EXTRA_FLAGS['I'])
+    ## ToDo: make path platform independent
     XTENSA_GCC_PREPROCESSOR.append(build_path + "/sketch")
     XTENSA_GCC_PREPROCESSOR.append(EXTRA_FLAGS['D__ASSEMBLER__'])
     XTENSA_GCC_PREPROCESSOR.append(file[0] + ".s")
@@ -262,6 +264,7 @@ def gen_xtensa_preprocessor_cmd(build_path, platform_path, file, board_options):
 
 #########################################################################################################
 def gen_binutils_as_cmd(build_path, platform_path, file, board_options):
+    ## ToDo: make path platform independent
     cmds = gen_cmds(platform_path + "/tools")
     file_names = gen_file_names(file[0])
     ULP_AS = []
@@ -275,10 +278,12 @@ def gen_binutils_as_cmd(build_path, platform_path, file, board_options):
 
 #########################################################################################################
 def gen_xtensa_ld_cmd(build_path, platform_path, file, board_options):
+    
     cmds = gen_cmds(platform_path + "/tools")
     file_names = gen_file_names(file[0])
     LIBRARIES = []
     for flag in CPREPROCESSOR_FLAGS:
+        ## ToDo: make path platform independent
         path = platform_path + "/tools" + CPREPROCESSOR_FLAGS[flag]
         LIBRARIES.append("-I")
         LIBRARIES.append(path.strip())
@@ -300,14 +305,17 @@ def gen_xtensa_ld_cmd(build_path, platform_path, file, board_options):
     XTENSA_GCC_LD.extend(LIBRARIES)
     XTENSA_GCC_LD.extend(board_options)
     XTENSA_GCC_LD.append(EXTRA_FLAGS['I'])
+    ## ToDo: make path platform independent
     XTENSA_GCC_LD.append(build_path + "/sketch")
     XTENSA_GCC_LD.append(EXTRA_FLAGS['D__ASSEMBLER__'])
+    ## ToDo: make path platform independent
     XTENSA_GCC_LD.append(platform_path + "/tools/sdk/include/ulp/ld/esp32.ulp.ld")
     STR_CMD = ' '.join(XTENSA_GCC_LD)
     return STR_CMD, XTENSA_GCC_LD
 
 #########################################################################################################
 def gen_binutils_ld_cmd(build_path, platform_path, file, board_options):
+    ## ToDo: make path platform independent
     cmds = gen_cmds(platform_path + "/tools")
     file_names = gen_file_names(file[0])
     ULP_LD = []
@@ -325,6 +333,7 @@ def gen_binutils_ld_cmd(build_path, platform_path, file, board_options):
 
 #########################################################################################################
 def gen_mapgen_cmd(build_path, platform_path, file, board_options):
+    ## ToDo: make path platform independent
     cmds = gen_cmds(platform_path + "/tools")
     file_names = gen_file_names(file[0])
     ULP_MAPGEN = []
@@ -338,6 +347,7 @@ def gen_mapgen_cmd(build_path, platform_path, file, board_options):
 
 #########################################################################################################
 def gen_binutils_objcopy_cmd(build_path, platform_path, file, board_options):
+    ## ToDo: make path platform independent
     cmds = gen_cmds(platform_path + "/tools")
     file_names = gen_file_names(file[0])
     ULP_OBJCOPY = []
@@ -351,6 +361,7 @@ def gen_binutils_objcopy_cmd(build_path, platform_path, file, board_options):
 
 #########################################################################################################
 def gen_xtensa_objcopy_cmd(build_path, platform_path, file, board_options):
+    ## ToDo: make path platform independent
     cmds = gen_cmds(platform_path + "/tools")
     file_names = gen_file_names(file[0])
     XTENSA_OBJCOPY = []
@@ -370,11 +381,13 @@ def gen_xtensa_objcopy_cmd(build_path, platform_path, file, board_options):
 
 #########################################################################################################
 def gen_xtensa_ar_cmd(build_path, platform_path, file, board_options):
+    ## ToDo: make path platform independent
     cmds = gen_cmds(platform_path + "/tools")
     file_names = gen_file_names(file[0])
     XTENSA_AR = []
     XTENSA_AR.append(cmds['xtensa_ar'])
     XTENSA_AR.append(EXTRA_FLAGS['CRU'])
+    ## ToDo: make path platform independent
     XTENSA_AR.append(build_path + "/arduino.ar")
     XTENSA_AR.append(file_names['bin_o'])
     STR_CMD = ' '.join(XTENSA_AR)
@@ -396,6 +409,7 @@ def gen_file_names(sfile):
 
 #########################################################################################################
 def gen_cmds(path):
+    ## ToDo: make path platform independent
     cmds = dict();
     cmds['xtensa_gcc']    = path + "/xtensa-esp32-elf/bin/xtensa-esp32-elf-gcc"
     cmds['xtensa_objcpy'] = path + "/xtensa-esp32-elf/bin/xtensa-esp32-elf-objcopy"
