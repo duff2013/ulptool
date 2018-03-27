@@ -1,3 +1,9 @@
+/*
+ * Must allocate more memory for the ulp in 
+ * esp32/tools/sdk/include/sdkconfig.h 
+ * -> #define CONFIG_ULP_COPROC_RESERVE_MEM
+ * for this sketch to compile.
+ */
 #include "esp_sleep.h"
 #include "driver/rtc_io.h"
 #include "driver/adc.h"
