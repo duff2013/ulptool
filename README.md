@@ -1,4 +1,4 @@
-Arduino ULP v1.0
+Arduino ULP v1.0.1
 ==================
 This guide explains how to setup Arduino to use ULP assembly files for your esp32 projects. Currently this guide is only geared for MacOS but will probably work with Linux. Windows is not supported yet but if you port it over let me know. Must have python 2.7 or higher installed which most likely you have if you use Arduino and esp. This is still beta and many things could go wrong so let me know if you encounter any issues.
 
@@ -11,8 +11,8 @@ Setup Steps
 3. Find your Arduino-esp32 core directory which Arduino IDE uses. Typically ../Arduino/hardware/esp32
 4. In the "arduino_ulp" repository folder you downloaded, copy the folder 'ulp' to ../esp32/tools/sdk/include/ replacing the existing folder named 'ulp'."
 5. In the 'arduino_ulp' repository folder you downloaded, copy the file "platform.txt" to ../esp32 replacing the one you have. If you want just remain the old "platform.txt" to save it if you want to revert back.
-6. In the 'arduino_ulp' repository folder you downloaded, copy the 'ulp_example' folder to where Arduino saves or sketchs. 
-7. Copy the binutils-esp32ulp toolchain you downloaded to ../esp32/tools.
+6. In the 'arduino_ulp' repository folder you downloaded, copy the 'ulp_example' folder to where Arduino saves your sketchs. 
+7. Copy the pre-compiled binutils-esp32ulp toolchain you downloaded to ../esp32/tools.
 
 Thats it, you now have all the files in place, lets look at very simple example to get you compiling ulp code now!
 
@@ -52,7 +52,7 @@ static void init_run_ulp(uint32_t usec) {
 }
 ```
 
-Create a new tab named <b>ulp.s</b>, take notice that the extension is a lower case 's'. Copy the code below into that ulp assembly file.
+Create a new tab named <b>ulp.s</b>, take notice that the extension is a lower case 's'. Copy the code below into that ulp assembly file tab.
 ```
 /* Define variables, which go into .bss section (zero-initialized data) */
     .bss
@@ -89,8 +89,13 @@ Compile and run and you should see the variable "ulp_count" increment every 100 
 
 Under the Hood
 ==============
-...
+All the magic happens in the python script called esp32ulp_build_recipe.py. This along with espressif's esp32ulp_mapgen.py in which both are located in the ulp directory from this repository.
 
 Limitations
 ==============
-...
+While almost a complete solution to programing the ULP coprocessor in assembly using Arduino, there are currently a few limitations. Once I fix these limitations I'll remove them from this list.
+
+1. No Windows support.
+2. Linux might or might not work.
+3. Only one ulp assembly file (.s) can be used currently. 
+4. Probably more that I can't think of now...

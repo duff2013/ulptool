@@ -1,9 +1,6 @@
 ULP coprocessor programming
 ===========================
 
-.. toctree::
-:maxdepth: 1
-
 Instruction set reference <ulp_instruction_set>
 Programming using macros (legacy) <ulp_macros>
 
@@ -32,8 +29,11 @@ To compile ULP code as part of a component, the following steps must be taken:
 2. Modify the component makefile, adding the following::
 
 ULP_APP_NAME ?= ulp_$(COMPONENT_NAME)
+
 ULP_S_SOURCES = $(COMPONENT_PATH)/ulp/ulp_source_file.S
+
 ULP_EXP_DEP_OBJECTS := main.o
+
 include $(IDF_PATH)/components/ulp/component_ulp_common.mk
 
 Here is each line explained:

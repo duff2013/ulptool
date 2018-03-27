@@ -4,9 +4,9 @@
 import os
 import sys
 import glob
-import shlex
 import optparse
 import subprocess
+
 ## ToDo: make paths platform independent
 CPREPROCESSOR_FLAGS = dict()
 CPREPROCESSOR_FLAGS['app_trace']            = "/sdk/include/app_trace "
@@ -103,23 +103,24 @@ def main(argv):
         sys.exit(2)
     
     board_options = []
-    board_options.append("-DF_CPU=" + options.df_cpu)
-    board_options.append("-DARDUINO=" + options.darduino)
-    board_options.append("-DARDUINO_" + options.darduino_dev)
-    board_options.append("-DARDUINO_ARCH_" + options.darduino_arch)
-    board_options.append("-DARDUINO_BOARD=" + options.darduino_board)
-    board_options.append("-DARDUINO_VARIANT=" + options.darduino_variant)
-    ## ToDo: make path platform independent
-    os.chdir(options.bpath + "/sketch/")
+    board_options.append('-DF_CPU=' + options.df_cpu)
+    board_options.append('-DARDUINO=' + options.darduino)
+    board_options.append('-DARDUINO_' + options.darduino_dev)
+    board_options.append('-DARDUINO_ARCH_' + options.darduino_arch)
+    board_options.append('-DARDUINO_BOARD=' + options.darduino_board)
+    board_options.append('-DARDUINO_VARIANT=' + options.darduino_variant)
 
-ulp_files = glob.glob('*.s')
+## ToDo: make path platform independent
+os.chdir(options.bpath + "/sketch/")
+    
+    ulp_files = glob.glob("*.s")
     if not ulp_files:
         print "No ULP Assembly File(s) Detected..."
         f = open("ulp_main.ld","w+")
-else:
-    build_ulp(options.bpath, options.ppath, ulp_files, board_options)
-    
-    sys.exit(0)
+    else:
+        build_ulp(options.bpath, options.ppath, ulp_files, board_options)
+
+sys.exit(0)
 
 #########################################################################################################
 def build_ulp(build_path, platform_path, ulp_sfiles, board_options):
@@ -324,7 +325,7 @@ def gen_binutils_ld_cmd(build_path, platform_path, file, board_options):
     ULP_LD.append(file_names['elf'])
     ULP_LD.append(EXTRA_FLAGS['A'])
     ULP_LD.append(EXTRA_FLAGS['ELF32'])
-    ULP_LD.append("-Map=" + file_names['map'])
+    ULP_LD.append('-Map=' + file_names['map'])
     ULP_LD.append(EXTRA_FLAGS['T'])
     ULP_LD.append(file_names['ld'])
     ULP_LD.append(file_names['o'])
