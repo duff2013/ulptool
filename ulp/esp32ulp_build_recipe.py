@@ -1,5 +1,6 @@
 #!/usr/bin/env python
-# compile ulp files in Arduino enviroment
+# compile ulp files using Arduino platform
+# Colin Duffy 2018
 
 import os
 import sys
@@ -9,43 +10,43 @@ import subprocess
 
 ## ToDo: make paths platform independent
 CPREPROCESSOR_FLAGS = dict()
-CPREPROCESSOR_FLAGS['app_trace']            = "/sdk/include/app_trace "
-CPREPROCESSOR_FLAGS['app_update']           = "/sdk/include/app_update "
-CPREPROCESSOR_FLAGS['bluedroid']            = "/sdk/include/bluedroid "
-CPREPROCESSOR_FLAGS['bootloader_support']   = "/sdk/include/bootloader_support "
-CPREPROCESSOR_FLAGS['bt']                   = "/sdk/include/bt "
-CPREPROCESSOR_FLAGS['coap']                 = "/sdk/include/coap "
-CPREPROCESSOR_FLAGS['config']               = "/sdk/include/config "
-CPREPROCESSOR_FLAGS['console']              = "/sdk/include/console "
-CPREPROCESSOR_FLAGS['driver']               = "/sdk/include/driver "
-CPREPROCESSOR_FLAGS['esp32']                = "/sdk/include/esp32 "
-CPREPROCESSOR_FLAGS['esp_adc_cal']          = "/sdk/include/esp_adc_cal "
-CPREPROCESSOR_FLAGS['ethernet']             = "/sdk/include/ethernet "
-CPREPROCESSOR_FLAGS['expat']                = "/sdk/include/expat "
-CPREPROCESSOR_FLAGS['fatfs']                = "/sdk/include/fatfs "
-CPREPROCESSOR_FLAGS['freertos']             = "/sdk/include/freertos "
-CPREPROCESSOR_FLAGS['heap']                 = "/sdk/include/heap "
-CPREPROCESSOR_FLAGS['jsmn']                 = "/sdk/include/jsmn "
-CPREPROCESSOR_FLAGS['json']                 = "/sdk/include/json "
-CPREPROCESSOR_FLAGS['log']                  = "/sdk/include/log "
-CPREPROCESSOR_FLAGS['lwip']                 = "/sdk/include/lwip "
-CPREPROCESSOR_FLAGS['mbedtls']              = "/sdk/include/mbedtls "
-CPREPROCESSOR_FLAGS['mbedtls_port']         = "/sdk/include/mbedtls_port "
-CPREPROCESSOR_FLAGS['mdns']                 = "/sdk/include/mdns "
-CPREPROCESSOR_FLAGS['newlib']               = "/sdk/include/newlib "
-CPREPROCESSOR_FLAGS['nghttp']               = "/sdk/include/nghttp "
-CPREPROCESSOR_FLAGS['nvs_flash']            = "/sdk/include/nvs_flash "
-CPREPROCESSOR_FLAGS['openssl']              = "/sdk/include/openssl "
-CPREPROCESSOR_FLAGS['sdmmc']                = "/sdk/include/sdmmc "
-CPREPROCESSOR_FLAGS['soc']                  = "/sdk/include/soc "
-CPREPROCESSOR_FLAGS['spi_flash']            = "/sdk/include/spi_flash "
-CPREPROCESSOR_FLAGS['spiffs']               = "/sdk/include/spiffs "
-CPREPROCESSOR_FLAGS['tcpip_adapter']        = "/sdk/include/tcpip_adapter "
-CPREPROCESSOR_FLAGS['ulp']                  = "/sdk/include/ulp "
-CPREPROCESSOR_FLAGS['vfs']                  = "/sdk/include/vfs "
-CPREPROCESSOR_FLAGS['wear_levelling']       = "/sdk/include/wear_levelling "
-CPREPROCESSOR_FLAGS['wpa_supplicant']       = "/sdk/include/wpa_supplicant "
-CPREPROCESSOR_FLAGS['xtensa-debug-module']  = "/sdk/include/xtensa-debug-module "
+CPREPROCESSOR_FLAGS['app_trace']            = os.path.join('tools','sdk','include','app_trace')
+CPREPROCESSOR_FLAGS['app_update']           = os.path.join('tools','sdk','include','app_update')
+CPREPROCESSOR_FLAGS['bluedroid']            = os.path.join('tools','sdk','include','bluedroid')
+CPREPROCESSOR_FLAGS['bootloader_support']   = os.path.join('tools','sdk','include','bootloader_support')
+CPREPROCESSOR_FLAGS['bt']                   = os.path.join('tools','sdk','include','bt')
+CPREPROCESSOR_FLAGS['coap']                 = os.path.join('tools','sdk','include','coap')
+CPREPROCESSOR_FLAGS['config']               = os.path.join('tools','sdk','include','config')
+CPREPROCESSOR_FLAGS['console']              = os.path.join('tools','sdk','include','console')
+CPREPROCESSOR_FLAGS['driver']               = os.path.join('tools','sdk','include','driver')
+CPREPROCESSOR_FLAGS['esp32']                = os.path.join('tools','sdk','include','esp32')
+CPREPROCESSOR_FLAGS['esp_adc_cal']          = os.path.join('tools','sdk','include','esp_adc_cal')
+CPREPROCESSOR_FLAGS['ethernet']             = os.path.join('tools','sdk','include','ethernet')
+CPREPROCESSOR_FLAGS['expat']                = os.path.join('tools','sdk','include','expat')
+CPREPROCESSOR_FLAGS['fatfs']                = os.path.join('tools','sdk','include','fatfs')
+CPREPROCESSOR_FLAGS['freertos']             = os.path.join('tools','sdk','include','freertos')
+CPREPROCESSOR_FLAGS['heap']                 = os.path.join('tools','sdk','include','heap')
+CPREPROCESSOR_FLAGS['jsmn']                 = os.path.join('tools','sdk','include','jsmn')
+CPREPROCESSOR_FLAGS['json']                 = os.path.join('tools','sdk','include','json')
+CPREPROCESSOR_FLAGS['log']                  = os.path.join('tools','sdk','include','log')
+CPREPROCESSOR_FLAGS['lwip']                 = os.path.join('tools','sdk','include','lwip')
+CPREPROCESSOR_FLAGS['mbedtls']              = os.path.join('tools','sdk','include','mbedtls')
+CPREPROCESSOR_FLAGS['mbedtls_port']         = os.path.join('tools','sdk','include','mbedtls_port')
+CPREPROCESSOR_FLAGS['mdns']                 = os.path.join('tools','sdk','include','mdns')
+CPREPROCESSOR_FLAGS['newlib']               = os.path.join('tools','sdk','include','newlib')
+CPREPROCESSOR_FLAGS['nghttp']               = os.path.join('tools','sdk','include','nghttp')
+CPREPROCESSOR_FLAGS['nvs_flash']            = os.path.join('tools','sdk','include','nvs_flash')
+CPREPROCESSOR_FLAGS['openssl']              = os.path.join('tools','sdk','include','openssl')
+CPREPROCESSOR_FLAGS['sdmmc']                = os.path.join('tools','sdk','include','sdmmc')
+CPREPROCESSOR_FLAGS['soc']                  = os.path.join('tools','sdk','include','soc')
+CPREPROCESSOR_FLAGS['spi_flash']            = os.path.join('tools','sdk','include','spi_flash')
+CPREPROCESSOR_FLAGS['spiffs']               = os.path.join('tools','sdk','include','spiffs')
+CPREPROCESSOR_FLAGS['tcpip_adapter']        = os.path.join('tools','sdk','include','tcpip_adapter')
+CPREPROCESSOR_FLAGS['ulp']                  = os.path.join('tools','sdk','include','ulp')
+CPREPROCESSOR_FLAGS['vfs']                  = os.path.join('tools','sdk','include','vfs')
+CPREPROCESSOR_FLAGS['wear_levelling']       = os.path.join('tools','sdk','include','wear_levelling')
+CPREPROCESSOR_FLAGS['wpa_supplicant']       = os.path.join('tools','sdk','include','wpa_supplicant')
+CPREPROCESSOR_FLAGS['xtensa-debug-module']  = os.path.join('tools','sdk','include','xtensa-debug-module')
 
 EXTRA_FLAGS = dict()
 EXTRA_FLAGS['doitESP32devkitV1']    = '/variants/doitESP32devkitV1'
@@ -58,6 +59,8 @@ EXTRA_FLAGS['O+']                   = '-O'
 EXTRA_FLAGS['I']                    = '-I'
 EXTRA_FLAGS['A']                    = '-A'
 EXTRA_FLAGS['T']                    = '-T'
+EXTRA_FLAGS['G']                    = '-g'
+EXTRA_FLAGS['F']                    = '-f'
 EXTRA_FLAGS['BINARY']               = 'binary'
 EXTRA_FLAGS['D__ASSEMBLER__']       = '-D__ASSEMBLER__'
 EXTRA_FLAGS['DESP_PLATFORM']        = '-DESP_PLATFORM'
@@ -76,6 +79,7 @@ EXTRA_FLAGS['RENAME_SECTION']       = '--rename-section'
 EXTRA_FLAGS['EMBEDDED']             = '.data=.rodata.embedded'
 EXTRA_FLAGS['CRU']                  = 'cru'
 EXTRA_FLAGS['ELF32']                = 'elf32-esp32ulp'
+EXTRA_FLAGS['POSIX']                = 'posix'
 
 #########################################################################################################
 def main(argv):
@@ -111,12 +115,12 @@ def main(argv):
     board_options.append('-DARDUINO_VARIANT=' + options.darduino_variant)
 
 ## ToDo: make path platform independent
-os.chdir(options.bpath + "/sketch/")
+os.chdir(os.path.join(options.bpath, 'sketch'))
     
     ulp_files = glob.glob("*.s")
     if not ulp_files:
         print "No ULP Assembly File(s) Detected..."
-        f = open("ulp_main.ld","w+")
+        f = open('ulp_main.ld',"w+")
     else:
         build_ulp(options.bpath, options.ppath, ulp_files, board_options)
 
@@ -127,9 +131,9 @@ def build_ulp(build_path, platform_path, ulp_sfiles, board_options):
     print "ULP Assembly File(s) Detected: " + str(ulp_sfiles)
     console_string = ""
     ## ToDo: make path platform independent
-    cmds = gen_cmds(platform_path + "/tools")
+    cmds = gen_cmds(os.path.join(platform_path, 'tools'))
     for file in ulp_sfiles:
-        file = file.split(".")
+        file = file.split('.')
         file_names = gen_file_names(file[0])
         
         ## Run each assembly file (foo.S) through C preprocessor
@@ -175,10 +179,11 @@ def build_ulp(build_path, platform_path, ulp_sfiles, board_options):
         ## Generate list of global symbols
         ## ToDo: need to use 'shell=false' for security reasons. Problem with unix pipe cmd '>'
         cmd = cmds['ulp_nm'] + " -g -f posix " + file_names['elf'] + " > " + file_names['sym']
+        #cmd = gen_binutils_nm_cmd(build_path, platform_path, file, board_options)
         proc = subprocess.Popen(cmd,stdout=subprocess.PIPE,stderr=subprocess.STDOUT,shell=True)
         (out, err) = proc.communicate()
         if out != '':
-            error_string = cmd[0] + '\n' + out
+            error_string = cmd + '\n' + out
             sys.exit(error_string)
         else:
             console_string += cmd + '\n'
@@ -230,14 +235,14 @@ def build_ulp(build_path, platform_path, ulp_sfiles, board_options):
 #########################################################################################################
 def gen_xtensa_preprocessor_cmd(build_path, platform_path, file, board_options):
     ## ToDo: make path platform independent
-    cmds = gen_cmds(platform_path + "/tools")
+    cmds = gen_cmds(os.path.join(platform_path, 'tools'))
     file_names = gen_file_names(file[0])
     LIBRARIES = []
     for flag in CPREPROCESSOR_FLAGS:
         ## ToDo: make path platform independent
-        path = platform_path + "/tools" + CPREPROCESSOR_FLAGS[flag]
-        LIBRARIES.append("-I")
-        LIBRARIES.append(path.strip())
+        path = os.path.join(platform_path, CPREPROCESSOR_FLAGS[flag])
+        LIBRARIES.append('-I')
+        LIBRARIES.append(path)
     XTENSA_GCC_PREPROCESSOR = []
     XTENSA_GCC_PREPROCESSOR.append(cmds['xtensa_gcc'])
     XTENSA_GCC_PREPROCESSOR.append(EXTRA_FLAGS['DESP_PLATFORM'])
@@ -257,20 +262,20 @@ def gen_xtensa_preprocessor_cmd(build_path, platform_path, file, board_options):
     XTENSA_GCC_PREPROCESSOR.extend(board_options)
     XTENSA_GCC_PREPROCESSOR.append(EXTRA_FLAGS['I'])
     ## ToDo: make path platform independent
-    XTENSA_GCC_PREPROCESSOR.append(build_path + "/sketch")
+    XTENSA_GCC_PREPROCESSOR.append(os.path.join(build_path, 'sketch'))
     XTENSA_GCC_PREPROCESSOR.append(EXTRA_FLAGS['D__ASSEMBLER__'])
-    XTENSA_GCC_PREPROCESSOR.append(file[0] + ".s")
+    XTENSA_GCC_PREPROCESSOR.append(file[0] + '.s')
     STR_CMD = ' '.join(XTENSA_GCC_PREPROCESSOR)
     return STR_CMD, XTENSA_GCC_PREPROCESSOR
 
 #########################################################################################################
 def gen_binutils_as_cmd(build_path, platform_path, file, board_options):
     ## ToDo: make path platform independent
-    cmds = gen_cmds(platform_path + "/tools")
+    cmds = gen_cmds(os.path.join(platform_path, 'tools'))
     file_names = gen_file_names(file[0])
     ULP_AS = []
     ULP_AS.append(cmds['ulp_as'])
-    ULP_AS.append("-al=" + file_names['lst'])
+    ULP_AS.append('-al=' + file_names['lst'])
     ULP_AS.append(EXTRA_FLAGS['O'])
     ULP_AS.append(file_names['o'])
     ULP_AS.append(file_names['ps'])
@@ -280,13 +285,13 @@ def gen_binutils_as_cmd(build_path, platform_path, file, board_options):
 #########################################################################################################
 def gen_xtensa_ld_cmd(build_path, platform_path, file, board_options):
     ## ToDo: make path platform independent
-    cmds = gen_cmds(platform_path + "/tools")
+    cmds = gen_cmds(os.path.join(platform_path, 'tools'))
     file_names = gen_file_names(file[0])
     LIBRARIES = []
     for flag in CPREPROCESSOR_FLAGS:
         ## ToDo: make path platform independent
-        path = platform_path + "/tools" + CPREPROCESSOR_FLAGS[flag]
-        LIBRARIES.append("-I")
+        path = os.path.join(platform_path, CPREPROCESSOR_FLAGS[flag])
+        LIBRARIES.append('-I')
         LIBRARIES.append(path.strip())
     XTENSA_GCC_LD = []
     XTENSA_GCC_LD.append(cmds['xtensa_gcc'])
@@ -307,21 +312,21 @@ def gen_xtensa_ld_cmd(build_path, platform_path, file, board_options):
     XTENSA_GCC_LD.extend(board_options)
     XTENSA_GCC_LD.append(EXTRA_FLAGS['I'])
     ## ToDo: make path platform independent
-    XTENSA_GCC_LD.append(build_path + "/sketch")
+    XTENSA_GCC_LD.append(os.path.join(build_path, 'sketch'))
     XTENSA_GCC_LD.append(EXTRA_FLAGS['D__ASSEMBLER__'])
     ## ToDo: make path platform independent
-    XTENSA_GCC_LD.append(platform_path + "/tools/sdk/include/ulp/ld/esp32.ulp.ld")
+    XTENSA_GCC_LD.append(os.path.join(platform_path, 'tools', 'sdk', 'include', 'ulp', 'ld', 'esp32.ulp.ld'))
     STR_CMD = ' '.join(XTENSA_GCC_LD)
     return STR_CMD, XTENSA_GCC_LD
 
 #########################################################################################################
 def gen_binutils_ld_cmd(build_path, platform_path, file, board_options):
     ## ToDo: make path platform independent
-    cmds = gen_cmds(platform_path + "/tools")
+    cmds = gen_cmds(os.path.join(platform_path, 'tools'))
     file_names = gen_file_names(file[0])
     ULP_LD = []
     ULP_LD.append(cmds['ulp_ld'])
-    ULP_LD.append("-o")
+    ULP_LD.append(EXTRA_FLAGS['O'])
     ULP_LD.append(file_names['elf'])
     ULP_LD.append(EXTRA_FLAGS['A'])
     ULP_LD.append(EXTRA_FLAGS['ELF32'])
@@ -333,23 +338,40 @@ def gen_binutils_ld_cmd(build_path, platform_path, file, board_options):
     return STR_CMD, ULP_LD
 
 #########################################################################################################
+def gen_binutils_nm_cmd(build_path, platform_path, file, board_options):
+    #cmd = cmds['ulp_nm'] + " -g -f posix " + file_names['elf'] + " > " + file_names['sym']
+    ## ToDo: make path platform independent
+    cmds = gen_cmds(os.path.join(platform_path, 'tools'))
+    file_names = gen_file_names(file[0])
+    ULP_NM = []
+    ULP_NM.append(cmds['ulp_nm'])
+    ULP_NM.append(EXTRA_FLAGS['G'])
+    ULP_NM.append(EXTRA_FLAGS['F'])
+    ULP_NM.append(EXTRA_FLAGS['POSIX'])
+    ULP_NM.append(file_names['elf'])
+    #ULP_NM.append('>')
+    #ULP_NM.append(file_names['sym'])
+    STR_CMD = ' '.join(ULP_NM)
+    return STR_CMD, ULP_NM
+
+#########################################################################################################
 def gen_mapgen_cmd(build_path, platform_path, file, board_options):
     ## ToDo: make path platform independent
-    cmds = gen_cmds(platform_path + "/tools")
+    cmds = gen_cmds(os.path.join(platform_path, 'tools'))
     file_names = gen_file_names(file[0])
     ULP_MAPGEN = []
     ULP_MAPGEN.append(cmds['ulp_mapgen'])
-    ULP_MAPGEN.append("-s")
+    ULP_MAPGEN.append('-s')
     ULP_MAPGEN.append(file_names['sym'])
-    ULP_MAPGEN.append("-o")
-    ULP_MAPGEN.append("ulp_main")
+    ULP_MAPGEN.append('-o')
+    ULP_MAPGEN.append('ulp_main')
     STR_CMD = ' '.join(ULP_MAPGEN)
     return STR_CMD, ULP_MAPGEN
 
 #########################################################################################################
 def gen_binutils_objcopy_cmd(build_path, platform_path, file, board_options):
     ## ToDo: make path platform independent
-    cmds = gen_cmds(platform_path + "/tools")
+    cmds = gen_cmds(os.path.join(platform_path, 'tools'))
     file_names = gen_file_names(file[0])
     ULP_OBJCOPY = []
     ULP_OBJCOPY.append(cmds['ulp_objcpy'])
@@ -363,7 +385,7 @@ def gen_binutils_objcopy_cmd(build_path, platform_path, file, board_options):
 #########################################################################################################
 def gen_xtensa_objcopy_cmd(build_path, platform_path, file, board_options):
     ## ToDo: make path platform independent
-    cmds = gen_cmds(platform_path + "/tools")
+    cmds = gen_cmds(os.path.join(platform_path, 'tools'))
     file_names = gen_file_names(file[0])
     XTENSA_OBJCOPY = []
     XTENSA_OBJCOPY.append(cmds['xtensa_objcpy'])
@@ -383,13 +405,13 @@ def gen_xtensa_objcopy_cmd(build_path, platform_path, file, board_options):
 #########################################################################################################
 def gen_xtensa_ar_cmd(build_path, platform_path, file, board_options):
     ## ToDo: make path platform independent
-    cmds = gen_cmds(platform_path + "/tools")
+    cmds = gen_cmds(os.path.join(platform_path, 'tools'))
     file_names = gen_file_names(file[0])
     XTENSA_AR = []
     XTENSA_AR.append(cmds['xtensa_ar'])
     XTENSA_AR.append(EXTRA_FLAGS['CRU'])
     ## ToDo: make path platform independent
-    XTENSA_AR.append(build_path + "/arduino.ar")
+    XTENSA_AR.append(os.path.join(build_path, 'arduino.ar'))
     XTENSA_AR.append(file_names['bin_o'])
     STR_CMD = ' '.join(XTENSA_AR)
     return STR_CMD, XTENSA_AR
@@ -397,31 +419,31 @@ def gen_xtensa_ar_cmd(build_path, platform_path, file, board_options):
 #########################################################################################################
 def gen_file_names(sfile):
     file_names = dict();
-    file_names['o']     = sfile + ".ulp.o"
-    file_names['ps']    = sfile + ".ulp.pS"
-    file_names['lst']   = sfile + ".ulp.lst"
-    file_names['ld']    = "ulp_main.common.ld"
-    file_names['elf']   = "ulp_main.elf"
-    file_names['map']   = "ulp_main.map"
-    file_names['sym']   = "ulp_main.sym"
-    file_names['bin']   = "ulp_main.bin"
-    file_names['bin_o'] = "ulp_main.bin.bin.o"
+    file_names['o']     = sfile + '.ulp.o'
+    file_names['ps']    = sfile + '.ulp.pS'
+    file_names['lst']   = sfile + '.ulp.lst'
+    file_names['ld']    = 'ulp_main.common.ld'
+    file_names['elf']   = 'ulp_main.elf'
+    file_names['map']   = 'ulp_main.map'
+    file_names['sym']   = 'ulp_main.sym'
+    file_names['bin']   = 'ulp_main.bin'
+    file_names['bin_o'] = 'ulp_main.bin.bin.o'
     return file_names
 
 #########################################################################################################
 def gen_cmds(path):
     ## ToDo: make path platform independent
     cmds = dict();
-    cmds['xtensa_gcc']    = path + "/xtensa-esp32-elf/bin/xtensa-esp32-elf-gcc"
-    cmds['xtensa_objcpy'] = path + "/xtensa-esp32-elf/bin/xtensa-esp32-elf-objcopy"
-    cmds['xtensa_ar']     = path + "/xtensa-esp32-elf/bin/xtensa-esp32-elf-ar"
-    cmds['ulp_as']        = path + "/esp32ulp-elf-binutils/bin/esp32ulp-elf-as"
-    cmds['ulp_ld']        = path + "/esp32ulp-elf-binutils/bin/esp32ulp-elf-ld"
-    cmds['ulp_nm']        = path + "/esp32ulp-elf-binutils/bin/esp32ulp-elf-nm"
-    cmds['ulp_objcpy']    = path + "/esp32ulp-elf-binutils/bin/esp32ulp-elf-objcopy"
-    cmds['ulp_mapgen']    = path + "/sdk/include/ulp/esp32ulp_mapgen.py"
+    cmds['xtensa_gcc']    = os.path.join(path, 'xtensa-esp32-elf','bin','xtensa-esp32-elf-gcc')
+    cmds['xtensa_objcpy'] = os.path.join(path, 'xtensa-esp32-elf','bin','xtensa-esp32-elf-objcopy')
+    cmds['xtensa_ar']     = os.path.join(path, 'xtensa-esp32-elf','bin','xtensa-esp32-elf-ar')
+    cmds['ulp_as']        = os.path.join(path, 'esp32ulp-elf-binutils','bin','esp32ulp-elf-as')
+    cmds['ulp_ld']        = os.path.join(path, 'esp32ulp-elf-binutils','bin','esp32ulp-elf-ld')
+    cmds['ulp_nm']        = os.path.join(path, 'esp32ulp-elf-binutils','bin','esp32ulp-elf-nm')
+    cmds['ulp_objcpy']    = os.path.join(path, 'esp32ulp-elf-binutils','bin','esp32ulp-elf-objcopy')
+    cmds['ulp_mapgen']    = os.path.join(path, 'sdk','include','ulp','esp32ulp_mapgen.py')
     return cmds
 
 #########################################################################################################
-if __name__ == "__main__":
+if __name__ == '__main__':
     main(sys.argv[1:])
