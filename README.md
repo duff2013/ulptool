@@ -1,12 +1,12 @@
-Arduino ULP v1.1.0
+Arduino ULP v1.2.0
 ==================
 This guide explains how to setup Arduino to use ULP assembly files for your esp32 projects. Currently this guide is only geared for MacOS but will probably work with Linux. Windows is not supported yet but if you port it over let me know. Must have python 2.7 or higher installed which most likely you have if you use Arduino and esp. This is still beta and many things could go wrong so let me know if you encounter any issues.
 
 Typically in Arduino you can compile assembly files using the '.S' extension. Using the ESP32 Arduino core framework these files would correspond to the Xtensa processors whose toolchain is incompatible with the ULP coprocessor. Luckily Arduino provides a fairly easy albeit not that flexible build framework using series of recipes. This guide extends the esp32 recipes for building the ULP assembly files. We will use the '.s' extensions for ULP assembly files which Arduino will let you create. I tried to keep the ulp build process the same as the esp-if framework with a few small modifications the user needs to compile in Arduino.
 
-Setup Steps
-===========
-1. Download this repository -> "arduino_ulp".
+Setup Steps:
+============
+1. Download this repository -> 'arduino_ulp'.
 2. Download the pre-compiled binutils-esp32ulp toolchain for Mac/Linux: https://github.com/espressif/binutils-esp32ulp/wiki.
 3. Find your Arduino-esp32 core directory which Arduino IDE uses. Typically ../Arduino/hardware/esp32
 4. In the 'arduino_ulp' repository folder you downloaded, copy the folder 'ulp' to ../esp32/tools/sdk/include/ replacing the existing folder named 'ulp'."
@@ -87,12 +87,12 @@ extern uint32_t ulp_count;
 
 Compile and run and you should see the variable 'ulp_count' increment every 100 msecs.
 
-Under the Hood
-==============
+Under the Hood:
+===============
 All the magic happens in the python script called esp32ulp_build_recipe.py. This along with espressif's esp32ulp_mapgen.py in which both are located in the ulp directory from this repository.
 
-Limitations
-==============
+Limitations:
+============
 While almost a complete solution to programing the ULP coprocessor in assembly, there are currently a few limitations. Once I fix these, I'll remove them from this list.
 
 1. No Windows support.
