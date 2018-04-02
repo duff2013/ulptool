@@ -1,3 +1,6 @@
+><b>Updated (4/1/18 v1.2.1)</b><br>
+* cleaned up readme<br>
+
 ><b>Updated (3/28/18 v1.2.0)</b><br>
 * python - should be platform independent now, windows/linux should work, needs testing<br>
 * python - fixed security issue with popen shell cmd<br>
