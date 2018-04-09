@@ -1,3 +1,8 @@
+><b>Updated (4/8/18 v1.4.0)</b><br>
+* Now handles multiple assembly files.<br>
+* update examples<br>
+* update README.md<br>
+
 ><b>Updated (4/5/18 v1.3.0)</b><br>
 * fixed a bunch of issues with esp32ulp_build_recipe.py<br>
 * update README.md<br>

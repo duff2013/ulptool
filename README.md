@@ -1,4 +1,4 @@
-Arduino ULP v1.3.0
+Arduino ULP v1.4.0
 ==================
 This guide explains how to setup Arduino to use ULP coprocessor assembly files for your esp32 projects. Currently the how-to is only geared for MacOS but will probably work with Linux. Windows should also work but needs verification since I don't have windows machine handy. This guides directories must be modified for Windows also. Must have python 2.7 or higher installed which most likely you have if you use Arduino and esp. Being beta many things could go wrong so let me know if you encounter any issues.
 
@@ -95,7 +95,8 @@ Limitations:
 ============
 While almost a complete solution to programing the ULP coprocessor in assembly, there are currently a few limitations. Once I fix these, I'll remove them from this list.
 
-1. No Windows support - this might work now.
-2. Linux might or might not work, again it might work now.
-3. Only one ulp assembly file (.s) can be used currently. 
-4. Probably more that I can't think of now...
+1. No Windows support - {this might work now}.
+2. Linux might or might not work - {again it might work now}.
+3. Only one ulp assembly file (.s) can be used currently - {should work now}. 
+4. Errors can be non-informative.
+5. Probably more that I can't think of now...

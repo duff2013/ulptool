@@ -44,20 +44,23 @@ uint16_t convert_lux(uint16_t raw_data)
     return temp;
 }
 
-void app_main()
-{
+void setup() {
     esp_sleep_wakeup_cause_t cause = esp_sleep_get_wakeup_cause();
     if (cause != ESP_SLEEP_WAKEUP_ULP) {
-        printf("Not ULP wakeup\n");
+        Serial.printf("Not ULP wakeup\n");
         init_ulp_program();
     } else {
-        printf("Deep sleep wakeup,raw_data: %d ",(uint16_t)ulp_result);
-        printf("light: %d lux\n",convert_lux(ulp_result));
+        Serial.printf("Deep sleep wakeup,raw_data: %d ",(uint16_t)ulp_result);
+        Serial.printf("light: %d lux\n",convert_lux(ulp_result));
     }
-    printf("Entering deep sleep\n\n");
+    Serial.printf("Entering deep sleep\n\n");
     start_ulp_program();
     ESP_ERROR_CHECK( esp_sleep_enable_ulp_wakeup() );
     esp_deep_sleep_start();
+}
+
+void loop() {
+
 }
 
 static void init_ulp_program()
@@ -81,5 +84,3 @@ static void start_ulp_program()
     esp_err_t err = ulp_run((&ulp_entry - RTC_SLOW_MEM) / sizeof(uint32_t));
     ESP_ERROR_CHECK(err);
 }
-
-

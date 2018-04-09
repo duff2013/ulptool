@@ -17,7 +17,7 @@
 #include "soc/rtc_cntl_reg.h"
 #include "soc/rtc_io_reg.h"
 #include "soc/soc_ulp.h"
-#include "stack.S"
+#include "stack.s"
 
 .set BH1750_ADDR_W, 0x46 
 .set BH1750_ADDR_R, 0x47 
@@ -56,7 +56,7 @@ clear:
    move r1, sample_counter
    ld r0, r1, 0
    .set zero, 0x00
-   move r0, zero
+    move r0, zero
    st r0, r1, 0
    jump wake_up
    /* value within range, end the program */
