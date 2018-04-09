@@ -115,8 +115,8 @@ def main(argv):
     board_options.append('-DARDUINO_BOARD=' + options.darduino_board)
     board_options.append('-DARDUINO_VARIANT=' + options.darduino_variant)
 
-## ToDo: make path platform independent
-os.chdir(os.path.join(options.bpath, 'sketch'))
+    ## ToDo: make path platform independent
+    os.chdir(os.path.join(options.bpath, 'sketch'))
     
     ulp_files = glob.glob("*.s")
     if not ulp_files:
@@ -126,7 +126,7 @@ os.chdir(os.path.join(options.bpath, 'sketch'))
     else:
         build_ulp(options.bpath, options.ppath, ulp_files, board_options)
 
-sys.exit(0)
+    sys.exit(0)
 
 #########################################################################################################
 def build_ulp(build_path, platform_path, ulp_sfiles, board_options):
@@ -158,15 +158,15 @@ def build_ulp(build_path, platform_path, ulp_sfiles, board_options):
         else:
             console_string += cmd[0] + '\n'
 
-## Run linker script template through C preprocessor
-cmd = gen_xtensa_ld_cmd(build_path, platform_path, ulp_sfiles, board_options)
+    ## Run linker script template through C preprocessor
+    cmd = gen_xtensa_ld_cmd(build_path, platform_path, ulp_sfiles, board_options)
     proc = subprocess.Popen(cmd[1],stdout=subprocess.PIPE,stderr=subprocess.PIPE,shell=False)
     (out, err) = proc.communicate()
     if err:
         error_string = cmd[0] + '\n' + out
         sys.exit(error_string)
-else:
-    console_string += cmd[0] + '\n'
+    else:
+        console_string += cmd[0] + '\n'
     
     ## Link object files into an output ELF file
     cmd = gen_binutils_ld_cmd(build_path, platform_path, ulp_sfiles, board_options)
@@ -178,29 +178,29 @@ else:
     else:
         console_string += cmd[0] + '\n'
 
-## Generate list of global symbols
-cmd = gen_binutils_nm_cmd(build_path, platform_path, ulp_sfiles, board_options)
+    ## Generate list of global symbols
+    cmd = gen_binutils_nm_cmd(build_path, platform_path, ulp_sfiles, board_options)
     proc = subprocess.Popen(cmd[1],stdout=subprocess.PIPE,stderr=subprocess.PIPE,shell=False)
     (out, err) = proc.communicate()
     if err:
         error_string = cmd[0] + '\n' + out
         sys.exit(error_string)
-else:
-    file_names_constant = gen_file_names_constant()
+    else:
+        file_names_constant = gen_file_names_constant()
         with open(file_names_constant['sym'],"w") as fsym:
             fsym.write(out)
-    console_string += cmd[0] + '\n'
+        console_string += cmd[0] + '\n'
 
 
-## Create LD export script and header file
-cmd = gen_mapgen_cmd(build_path, platform_path, ulp_sfiles, board_options)
+    ## Create LD export script and header file
+    cmd = gen_mapgen_cmd(build_path, platform_path, ulp_sfiles, board_options)
     proc = subprocess.Popen(cmd[1],stdout=subprocess.PIPE,stderr=subprocess.PIPE,shell=False)
     (out, err) = proc.communicate()
     if err:
         error_string = cmd[0] + '\n' + out
         sys.exit(error_string)
-else:
-    console_string += cmd[0] + '\n'
+    else:
+        console_string += cmd[0] + '\n'
     
     ## Add the generated binary to the list of binary files
     cmd = gen_binutils_objcopy_cmd(build_path, platform_path, ulp_sfiles, board_options)
@@ -212,15 +212,15 @@ else:
     else:
         console_string += cmd[0] + '\n'
 
-## Add the generated binary to the list of binary files
-cmd = gen_xtensa_objcopy_cmd(build_path, platform_path, ulp_sfiles, board_options)
+    ## Add the generated binary to the list of binary files
+    cmd = gen_xtensa_objcopy_cmd(build_path, platform_path, ulp_sfiles, board_options)
     proc = subprocess.Popen(cmd[1],stdout=subprocess.PIPE,stderr=subprocess.PIPE,shell=False)
     (out, err) = proc.communicate()
     if err:
         error_string = cmd[0] + '\n' + out
         sys.exit(error_string)
-else:
-    console_string += cmd[0] + '\n'
+    else:
+        console_string += cmd[0] + '\n'
     
     ## embed into arduino.ar
     cmd = gen_XTENSA_AR_cmd(build_path, platform_path, ulp_sfiles, board_options)
@@ -232,7 +232,7 @@ else:
     else:
         console_string += cmd[0]
 
-print console_string
+    print console_string
     
     return 0
 
