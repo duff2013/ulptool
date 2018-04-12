@@ -1,3 +1,7 @@
+><b>Updated (4/11/18 v1.5.0)</b><br>
+* Fixed a few OS dependent paths, hopefully windows and linux are fully supported now.<br>
+* Added MIT license.<br>
+
 ><b>Updated (4/8/18 v1.4.0)</b><br>
 * Now handles multiple assembly files.<br>
 * update examples<br>

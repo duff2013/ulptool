@@ -1,4 +1,4 @@
-Arduino ULP v1.4.0
+Arduino ULP v1.5.0
 ==================
 This guide explains how to setup Arduino to use ULP coprocessor assembly files for your esp32 projects. Currently the how-to is only geared for MacOS but will probably work with Linux. Windows should also work but needs verification since I don't have windows machine handy. This guides directories must be modified for Windows also. Must have python 2.7 or higher installed which most likely you have if you use Arduino and esp. Being beta many things could go wrong so let me know if you encounter any issues.
 
@@ -7,8 +7,8 @@ Typically in Arduino you can compile assembly files using the '.S' extension. Us
 Setup Steps:
 ============
 1. Download this repository -> 'arduino_ulp'.
-2. Download the pre-compiled binutils-esp32ulp toolchain for Mac/Linux: https://github.com/espressif/binutils-esp32ulp/wiki.
-3. Find your Arduino-esp32 core directory which Arduino IDE uses. Typically .../Arduino/hardware/esp32
+2. Download the pre-compiled binutils-esp32ulp toolchain for Mac/Linux/Windows: https://github.com/espressif/binutils-esp32ulp/wiki.
+3. Find your Arduino-esp32 core directory which Arduino IDE uses. Typically .../Documents/Arduino/hardware/espressif/esp32
 4. In the 'arduino_ulp' repository folder you downloaded, copy the folder 'ulp' to .../esp32/tools/sdk/include/ replacing the existing folder named 'ulp'."
 5. In the 'arduino_ulp' repository folder you downloaded, copy the file 'platform.txt' to ../esp32 replacing the one you have. If you want, just remain the old "platform.txt" so you can revert back.
 6. In the 'arduino_ulp' repository folder you downloaded, copy the 'ulp_example' folder to where Arduino saves your sketches. 
@@ -38,7 +38,7 @@ void setup() {
 
 void loop() {
     // ulp variables data is the lower 16 bits
-    Serial.printf("ulp count: %i\n", ulp_count & 0xFFFF);
+    Serial.printf("ulp count: %u\n", ulp_count & 0xFFFF);
     delay(100);
 }
 
@@ -97,6 +97,6 @@ While almost a complete solution to programing the ULP coprocessor in assembly, 
 
 1. No Windows support - {this might work now}.
 2. Linux might or might not work - {again it might work now}.
-3. Only one ulp assembly file (.s) can be used currently - {should work now}. 
+3. Only one ulp assembly file (.s) can be used currently - {multiple files should work now}. 
 4. Errors can be non-informative.
 5. Probably more that I can't think of now...
