@@ -1,3 +1,9 @@
+><b>Updated (4/14/18 v1.6.0)</b><br>
+* Fixed Windows issue of needing python called explesivly in esp32ulp_build_recipe.py.<br>
+* Tested and works with Linux Ubuntu VR on my Mac.<br>
+* Tested and works with Windows 7 VR on my Mac.<br>
+
+
 ><b>Updated (4/11/18 v1.5.0)</b><br>
 * Fixed a few OS dependent paths, hopefully windows and linux are fully supported now.<br>
 * Added MIT license.<br>

@@ -357,6 +357,7 @@ def gen_mapgen_cmd(build_path, platform_path, file, board_options):
     cmds = gen_cmds(os.path.join(platform_path, 'tools'))
     file_names_constant = gen_file_names_constant()
     ULP_MAPGEN = []
+    ULP_MAPGEN.append('python')
     ULP_MAPGEN.append(cmds['ULP_MAPGEN'])
     ULP_MAPGEN.append(EXTRA_FLAGS['S'])
     ULP_MAPGEN.append(file_names_constant['sym'])
