@@ -1,4 +1,4 @@
-Arduino ULP v1.6.0
+Arduino ULP v1.6.1
 ==================
 This guide explains how to setup Arduino to use ULP coprocessor assembly files for your esp32 projects. Currently the how-to is only geared for MacOS but has been tested and works with Windows 7 and Ubuntu Linux. This guides directories must be modified for Linux and Windows to work. Must have python 2.7 or higher installed which most likely you have if you use Arduino and esp. Python for Windows needs $PATH set to work. Being beta many things could go wrong so let me know if you encounter any issues.
 
@@ -7,7 +7,7 @@ Typically in Arduino you can compile assembly files using the '.S' extension. Us
 Setup Steps:
 ============
 1. Download this repository -> 'arduino_ulp'.
-2. Download the pre-compiled binutils-esp32ulp toolchain for Mac/Linux/Windows: https://github.com/espressif/binutils-esp32ulp/wiki.
+2. Download the pre-compiled binutils-esp32ulp toolchain for Mac/Linux/Windows: https://github.com/espressif/binutils-esp32ulp/releases
 3. Find your Arduino-esp32 core directory which Arduino IDE uses. Typically (Mac OS).../Documents/Arduino/hardware/espressif/esp32
 4. In the 'arduino_ulp' repository folder you downloaded, copy the folder 'ulp' to .../esp32/tools/sdk/include/ replacing the existing folder named 'ulp'."
 5. In the 'arduino_ulp' repository folder you downloaded, copy the file 'platform.txt' to ../esp32 replacing the one you have. If you want, just remain the old "platform.txt" so you can revert back.

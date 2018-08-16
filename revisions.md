@@ -1,3 +1,7 @@
+><b>Updated (8/16/18 v1.6.1)</b><br>
+* Added new example sketch from README.md.<br>
+* Fixed binutils-esp32ulp download path.<br>
+
 ><b>Updated (4/14/18 v1.6.0)</b><br>
 * Fixed Windows issue of needing python called explesivly in esp32ulp_build_recipe.py.<br>
 * Tested and works with Linux Ubuntu VR on my Mac.<br>
