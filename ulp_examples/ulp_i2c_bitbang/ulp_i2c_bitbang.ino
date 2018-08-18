@@ -6,6 +6,13 @@
    software is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
    CONDITIONS OF ANY KIND, either express or implied.
 */
+/*
+ * Must allocate more memory for the ulp in 
+ * esp32/tools/sdk/include/sdkconfig.h 
+ * -> #define CONFIG_ULP_COPROC_RESERVE_MEM
+ * for this sketch to compile. 2048b seems 
+ * good.
+ */
 
 #include <stdio.h>
 #include <math.h>
@@ -26,37 +33,37 @@ const gpio_num_t GPIO_SCL = GPIO_NUM_32;
 const gpio_num_t GPIO_SDA = GPIO_NUM_33;
 
 /* This function is called once after power-on reset, to load ULP program into
- * RTC memory and configure the ADC.
- */
+   RTC memory and configure the ADC.
+*/
 static void init_ulp_program();
 
 /* This function is called every time before going into deep sleep.
- * It starts the ULP program and resets measurement counter.
- */
+   It starts the ULP program and resets measurement counter.
+*/
 static void start_ulp_program();
 
 uint16_t convert_lux(uint16_t raw_data)
 {
-    uint32_t temp;
-    temp = (uint32_t) raw_data;
-    temp *= 10;
-    temp /= 120;
-    return temp;
+  uint32_t temp;
+  temp = (uint32_t) raw_data;
+  temp *= 10;
+  temp /= 120;
+  return temp;
 }
 
 void setup() {
-    esp_sleep_wakeup_cause_t cause = esp_sleep_get_wakeup_cause();
-    if (cause != ESP_SLEEP_WAKEUP_ULP) {
-        Serial.printf("Not ULP wakeup\n");
-        init_ulp_program();
-    } else {
-        Serial.printf("Deep sleep wakeup,raw_data: %d ",(uint16_t)ulp_result);
-        Serial.printf("light: %d lux\n",convert_lux(ulp_result));
-    }
-    Serial.printf("Entering deep sleep\n\n");
-    start_ulp_program();
-    ESP_ERROR_CHECK( esp_sleep_enable_ulp_wakeup() );
-    esp_deep_sleep_start();
+  esp_sleep_wakeup_cause_t cause = esp_sleep_get_wakeup_cause();
+  if (cause != ESP_SLEEP_WAKEUP_ULP) {
+    Serial.printf("Not ULP wakeup\n");
+    init_ulp_program();
+  } else {
+    Serial.printf("Deep sleep wakeup,raw_data: %d ", (uint16_t)ulp_result);
+    Serial.printf("light: %d lux\n", convert_lux(ulp_result));
+  }
+  Serial.printf("Entering deep sleep\n\n");
+  start_ulp_program();
+  ESP_ERROR_CHECK( esp_sleep_enable_ulp_wakeup() );
+  esp_deep_sleep_start();
 }
 
 void loop() {
@@ -65,22 +72,22 @@ void loop() {
 
 static void init_ulp_program()
 {
-    esp_err_t err = ulp_load_binary(0, ulp_main_bin_start,
-            (ulp_main_bin_end - ulp_main_bin_start) / sizeof(uint32_t));
-    ESP_ERROR_CHECK(err);
+  esp_err_t err = ulp_load_binary(0, ulp_main_bin_start,
+                                  (ulp_main_bin_end - ulp_main_bin_start) / sizeof(uint32_t));
+  ESP_ERROR_CHECK(err);
 
-    rtc_gpio_init(GPIO_SCL);
-    rtc_gpio_set_direction(GPIO_SCL, RTC_GPIO_MODE_INPUT_ONLY);
-    rtc_gpio_init(GPIO_SDA);
-    rtc_gpio_set_direction(GPIO_SDA, RTC_GPIO_MODE_INPUT_ONLY);
+  rtc_gpio_init(GPIO_SCL);
+  rtc_gpio_set_direction(GPIO_SCL, RTC_GPIO_MODE_INPUT_ONLY);
+  rtc_gpio_init(GPIO_SDA);
+  rtc_gpio_set_direction(GPIO_SDA, RTC_GPIO_MODE_INPUT_ONLY);
 
-    /* Set ULP wake up period to 1000ms */
-    ulp_set_wakeup_period(0, 1000*1000);
+  /* Set ULP wake up period to 1000ms */
+  ulp_set_wakeup_period(0, 1000 * 1000);
 }
 
 static void start_ulp_program()
 {
-    /* Start the program */
-    esp_err_t err = ulp_run((&ulp_entry - RTC_SLOW_MEM) / sizeof(uint32_t));
-    ESP_ERROR_CHECK(err);
+  /* Start the program */
+  esp_err_t err = ulp_run((&ulp_entry - RTC_SLOW_MEM) / sizeof(uint32_t));
+  ESP_ERROR_CHECK(err);
 }

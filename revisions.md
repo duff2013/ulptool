@@ -1,3 +1,7 @@
+><b>Updated (8/17/18 v1.7.0)</b><br>
+* Update platform.txt to arduino-esp32 v1.0.0 and ulp assembly compile<br>
+* Add comment to increase ulp memory in examples<br>
+
 ><b>Updated (8/16/18 v1.6.1)</b><br>
 * Added new example sketch from README.md.<br>
 * Fixed binutils-esp32ulp download path.<br>

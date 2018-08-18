@@ -1,5 +1,7 @@
-Arduino ULP v1.6.1
+Arduino ULP v1.7.0
 ==================
+The last update breaks ulp assembly compiling for some older versions of arduino-esp32, please update your core to the latest for this to work.
+
 This guide explains how to setup Arduino to use ULP coprocessor assembly files for your esp32 projects. Currently the how-to is only geared for MacOS but has been tested and works with Windows 7 and Ubuntu Linux. This guides directories must be modified for Linux and Windows to work. Must have python 2.7 or higher installed which most likely you have if you use Arduino and esp. Python for Windows needs $PATH set to work. Being beta many things could go wrong so let me know if you encounter any issues.
 
 Typically in Arduino you can compile assembly files using the '.S' extension. Using the ESP32 Arduino core framework these files would correspond to the Xtensa processors whose toolchain is incompatible with the ULP coprocessor. Luckily, Arduino provides a fairly easy albeit not that flexible build framework using series of recipes. This guide extends those esp32 recipes for building the ULP assembly files. We will use the '.s' extensions for ULP assembly files which Arduino will let you create. I tried to keep the ulp build process the same as the esp-if framework with only a few small modifications the user needs to do in order to compile in Arduino.
