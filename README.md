@@ -1,4 +1,4 @@
-Arduino ULP v1.7.0
+Arduino ULP v1.8.0
 ==================
 The last update breaks ulp assembly compiling for some older versions of arduino-esp32, please update your core to the latest for this to work.
 

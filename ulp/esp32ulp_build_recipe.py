@@ -20,47 +20,10 @@
 import os
 import sys
 import glob
-import optparse
+import argparse
 import subprocess
 
-CPREPROCESSOR_FLAGS = dict()
-CPREPROCESSOR_FLAGS['app_trace']            = os.path.join('tools','sdk','include','app_trace')
-CPREPROCESSOR_FLAGS['app_update']           = os.path.join('tools','sdk','include','app_update')
-CPREPROCESSOR_FLAGS['bluedroid']            = os.path.join('tools','sdk','include','bluedroid')
-CPREPROCESSOR_FLAGS['bootloader_support']   = os.path.join('tools','sdk','include','bootloader_support')
-CPREPROCESSOR_FLAGS['bt']                   = os.path.join('tools','sdk','include','bt')
-CPREPROCESSOR_FLAGS['coap']                 = os.path.join('tools','sdk','include','coap')
-CPREPROCESSOR_FLAGS['config']               = os.path.join('tools','sdk','include','config')
-CPREPROCESSOR_FLAGS['console']              = os.path.join('tools','sdk','include','console')
-CPREPROCESSOR_FLAGS['driver']               = os.path.join('tools','sdk','include','driver')
-CPREPROCESSOR_FLAGS['esp32']                = os.path.join('tools','sdk','include','esp32')
-CPREPROCESSOR_FLAGS['esp_adc_cal']          = os.path.join('tools','sdk','include','esp_adc_cal')
-CPREPROCESSOR_FLAGS['ethernet']             = os.path.join('tools','sdk','include','ethernet')
-CPREPROCESSOR_FLAGS['expat']                = os.path.join('tools','sdk','include','expat')
-CPREPROCESSOR_FLAGS['fatfs']                = os.path.join('tools','sdk','include','fatfs')
-CPREPROCESSOR_FLAGS['freertos']             = os.path.join('tools','sdk','include','freertos')
-CPREPROCESSOR_FLAGS['heap']                 = os.path.join('tools','sdk','include','heap')
-CPREPROCESSOR_FLAGS['jsmn']                 = os.path.join('tools','sdk','include','jsmn')
-CPREPROCESSOR_FLAGS['json']                 = os.path.join('tools','sdk','include','json')
-CPREPROCESSOR_FLAGS['log']                  = os.path.join('tools','sdk','include','log')
-CPREPROCESSOR_FLAGS['lwip']                 = os.path.join('tools','sdk','include','lwip')
-CPREPROCESSOR_FLAGS['mbedtls']              = os.path.join('tools','sdk','include','mbedtls')
-CPREPROCESSOR_FLAGS['mbedtls_port']         = os.path.join('tools','sdk','include','mbedtls_port')
-CPREPROCESSOR_FLAGS['mdns']                 = os.path.join('tools','sdk','include','mdns')
-CPREPROCESSOR_FLAGS['newlib']               = os.path.join('tools','sdk','include','newlib')
-CPREPROCESSOR_FLAGS['nghttp']               = os.path.join('tools','sdk','include','nghttp')
-CPREPROCESSOR_FLAGS['nvs_flash']            = os.path.join('tools','sdk','include','nvs_flash')
-CPREPROCESSOR_FLAGS['openssl']              = os.path.join('tools','sdk','include','openssl')
-CPREPROCESSOR_FLAGS['sdmmc']                = os.path.join('tools','sdk','include','sdmmc')
-CPREPROCESSOR_FLAGS['soc']                  = os.path.join('tools','sdk','include','soc')
-CPREPROCESSOR_FLAGS['spi_flash']            = os.path.join('tools','sdk','include','spi_flash')
-CPREPROCESSOR_FLAGS['spiffs']               = os.path.join('tools','sdk','include','spiffs')
-CPREPROCESSOR_FLAGS['tcpip_adapter']        = os.path.join('tools','sdk','include','tcpip_adapter')
-CPREPROCESSOR_FLAGS['ulp']                  = os.path.join('tools','sdk','include','ulp')
-CPREPROCESSOR_FLAGS['vfs']                  = os.path.join('tools','sdk','include','vfs')
-CPREPROCESSOR_FLAGS['wear_levelling']       = os.path.join('tools','sdk','include','wear_levelling')
-CPREPROCESSOR_FLAGS['wpa_supplicant']       = os.path.join('tools','sdk','include','wpa_supplicant')
-CPREPROCESSOR_FLAGS['xtensa-debug-module']  = os.path.join('tools','sdk','include','xtensa-debug-module')
+CPREPROCESSOR_FLAGS = []
 
 EXTRA_FLAGS = dict()
 EXTRA_FLAGS['doitESP32devkitV1']    = os.path.join('variants','doitESP32devkitV1')
@@ -97,53 +60,42 @@ EXTRA_FLAGS['ELF32']                = 'elf32-esp32ulp'
 EXTRA_FLAGS['POSIX']                = 'posix'
 
 def main(argv):
-    parser = optparse.OptionParser()
-    parser.add_option('-b', '--buildpath', dest='bpath', help='Sketch Build Path')
-    parser.add_option('-e', '--compiler.c.elf.flags', dest='elfflags', help='Compiler c elf flags')
-    parser.add_option('-p', '--platformpath', dest='ppath', help='ESP-IDF Platform Path')
-    parser.add_option('--DF_CPU', dest='df_cpu', help='CPU Speed')
-    parser.add_option('--DARDUINO', dest='darduino', help='Run Time IDE Version')
-    parser.add_option('--DARDUINO_', dest='darduino_dev', help='Board Development Type')
-    parser.add_option('--DARDUINO_ARCH_', dest='darduino_arch', help='Arch Type')
-    parser.add_option('--DARDUINO_BOARD', dest='darduino_board', help='Board Type')
-    parser.add_option('--DARDUINO_VARIANT', dest='darduino_variant', help='Board Variant')
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-b', action='store')
+    parser.add_argument('-p', action='store')
+    parser.add_argument('-I', action='append')
+    args, options = parser.parse_known_args()
     
-    (options, args) = parser.parse_args()
+    for item in args.I:
+        CPREPROCESSOR_FLAGS.append('-I')
+        CPREPROCESSOR_FLAGS.append(item)
     
-    if options.elfflags:
-        print "COMPILER ELF"
-        return 0
-    if options.bpath is None:
-        print "build path error_string"
-        sys.exit(2)
-    if options.ppath is None:
-        print "platform path error_string"
-        sys.exit(2)
-
     board_options = []
-    board_options.append('-DF_CPU=' + options.df_cpu)
-    board_options.append('-DARDUINO=' + options.darduino)
-    board_options.append('-DARDUINO_' + options.darduino_dev)
-    board_options.append('-DARDUINO_ARCH_' + options.darduino_arch)
-    board_options.append('-DARDUINO_BOARD=' + options.darduino_board)
-    board_options.append('-DARDUINO_VARIANT=' + options.darduino_variant)
+    for item in options:
+        if item.startswith('--'):
+            board_options.append(item[1:])
 
-    os.chdir(os.path.join(options.bpath, 'sketch'))
+bpath = args.b
+    ppath = args.p
     
-    ulp_files = glob.glob("*.s")
+    os.chdir(os.path.join(bpath, 'sketch'))
+    ulp_files = glob.glob('*.s')
+    
     if not ulp_files:
         print "No ULP Assembly File(s) Detected..."
         with open('ulp_main.ld',"w") as fld:
             fld.close()
     else:
-        build_ulp(options.bpath, options.ppath, ulp_files, board_options)
+        build_ulp(bpath, ppath, ulp_files, board_options)
 
-    sys.exit(0)
+sys.exit(0)
+
 
 def build_ulp(build_path, platform_path, ulp_sfiles, board_options):
-    print "ULP Assembly File(s) Detected: " + str(ulp_sfiles)
-    console_string = ""
+    print 'ULP Assembly File(s) Detected: ' + ', '.join(ulp_sfiles)
+    console_string = ''
     cmds = gen_cmds(os.path.join(platform_path, 'tools'))
+    
     for file in ulp_sfiles:
         file = file.split('.')
         file_names = gen_file_names(file[0])
@@ -168,13 +120,13 @@ def build_ulp(build_path, platform_path, ulp_sfiles, board_options):
         else:
             console_string += cmd[0] + '\n'
 
-    ## Run linker script template through C preprocessor
-    cmd = gen_xtensa_ld_cmd(build_path, platform_path, ulp_sfiles, board_options)
-    proc = subprocess.Popen(cmd[1],stdout=subprocess.PIPE,stderr=subprocess.PIPE,shell=False)
-    (out, err) = proc.communicate()
-    if err:
-        error_string = cmd[0] + '\n' + out
-        sys.exit(error_string)
+## Run linker script template through C preprocessor
+cmd = gen_xtensa_ld_cmd(build_path, platform_path, ulp_sfiles, board_options)
+proc = subprocess.Popen(cmd[1],stdout=subprocess.PIPE,stderr=subprocess.PIPE,shell=False)
+(out, err) = proc.communicate()
+if err:
+    error_string = cmd[0] + '\n' + out
+    sys.exit(error_string)
     else:
         console_string += cmd[0] + '\n'
     
@@ -188,20 +140,20 @@ def build_ulp(build_path, platform_path, ulp_sfiles, board_options):
     else:
         console_string += cmd[0] + '\n'
 
-    ## Generate list of global symbols
-    cmd = gen_binutils_nm_cmd(build_path, platform_path, ulp_sfiles, board_options)
-    proc = subprocess.Popen(cmd[1],stdout=subprocess.PIPE,stderr=subprocess.PIPE,shell=False)
-    (out, err) = proc.communicate()
-    if err:
-        error_string = cmd[0] + '\n' + out
-        sys.exit(error_string)
+## Generate list of global symbols
+cmd = gen_binutils_nm_cmd(build_path, platform_path, ulp_sfiles, board_options)
+proc = subprocess.Popen(cmd[1],stdout=subprocess.PIPE,stderr=subprocess.PIPE,shell=False)
+(out, err) = proc.communicate()
+if err:
+    error_string = cmd[0] + '\n' + out
+    sys.exit(error_string)
     else:
         file_names_constant = gen_file_names_constant()
         with open(file_names_constant['sym'],"w") as fsym:
             fsym.write(out)
         console_string += cmd[0] + '\n'
-
-
+    
+    
     ## Create LD export script and header file
     cmd = gen_mapgen_cmd(build_path, platform_path, ulp_sfiles, board_options)
     proc = subprocess.Popen(cmd[1],stdout=subprocess.PIPE,stderr=subprocess.PIPE,shell=False)
@@ -222,13 +174,13 @@ def build_ulp(build_path, platform_path, ulp_sfiles, board_options):
     else:
         console_string += cmd[0] + '\n'
 
-    ## Add the generated binary to the list of binary files
-    cmd = gen_xtensa_objcopy_cmd(build_path, platform_path, ulp_sfiles, board_options)
-    proc = subprocess.Popen(cmd[1],stdout=subprocess.PIPE,stderr=subprocess.PIPE,shell=False)
-    (out, err) = proc.communicate()
-    if err:
-        error_string = cmd[0] + '\n' + out
-        sys.exit(error_string)
+## Add the generated binary to the list of binary files
+cmd = gen_xtensa_objcopy_cmd(build_path, platform_path, ulp_sfiles, board_options)
+proc = subprocess.Popen(cmd[1],stdout=subprocess.PIPE,stderr=subprocess.PIPE,shell=False)
+(out, err) = proc.communicate()
+if err:
+    error_string = cmd[0] + '\n' + out
+    sys.exit(error_string)
     else:
         console_string += cmd[0] + '\n'
     
@@ -242,18 +194,13 @@ def build_ulp(build_path, platform_path, ulp_sfiles, board_options):
     else:
         console_string += cmd[0]
 
-    print console_string
+print console_string
     
     return 0
 
 def gen_xtensa_preprocessor_cmd(build_path, platform_path, file, board_options):
     cmds = gen_cmds(os.path.join(platform_path, 'tools'))
     file_names = gen_file_names(file[0])
-    LIBRARIES = []
-    for flag in CPREPROCESSOR_FLAGS:
-        path = os.path.join(platform_path, CPREPROCESSOR_FLAGS[flag])
-        LIBRARIES.append('-I')
-        LIBRARIES.append(path)
     XTENSA_GCC_PREPROCESSOR = []
     XTENSA_GCC_PREPROCESSOR.append(cmds['XTENSA_GCC'])
     XTENSA_GCC_PREPROCESSOR.append(EXTRA_FLAGS['DESP_PLATFORM'])
@@ -269,7 +216,7 @@ def gen_xtensa_preprocessor_cmd(build_path, platform_path, file, board_options):
     XTENSA_GCC_PREPROCESSOR.append(EXTRA_FLAGS['XC'])
     XTENSA_GCC_PREPROCESSOR.append(EXTRA_FLAGS['O'])
     XTENSA_GCC_PREPROCESSOR.append(file_names['ps'])
-    XTENSA_GCC_PREPROCESSOR.extend(LIBRARIES)
+    XTENSA_GCC_PREPROCESSOR.extend(CPREPROCESSOR_FLAGS)
     XTENSA_GCC_PREPROCESSOR.extend(board_options)
     XTENSA_GCC_PREPROCESSOR.append(EXTRA_FLAGS['I'])
     XTENSA_GCC_PREPROCESSOR.append(os.path.join(build_path, 'sketch'))
@@ -293,11 +240,6 @@ def gen_binutils_as_cmd(build_path, platform_path, file, board_options):
 def gen_xtensa_ld_cmd(build_path, platform_path, file, board_options):
     cmds = gen_cmds(os.path.join(platform_path, 'tools'))
     file_names = gen_file_names_constant()
-    LIBRARIES = []
-    for flag in CPREPROCESSOR_FLAGS:
-        path = os.path.join(platform_path, CPREPROCESSOR_FLAGS[flag])
-        LIBRARIES.append('-I')
-        LIBRARIES.append(path.strip())
     XTENSA_GCC_LD = []
     XTENSA_GCC_LD.append(cmds['XTENSA_GCC'])
     XTENSA_GCC_LD.append(EXTRA_FLAGS['DESP_PLATFORM'])
@@ -313,7 +255,7 @@ def gen_xtensa_ld_cmd(build_path, platform_path, file, board_options):
     XTENSA_GCC_LD.append(EXTRA_FLAGS['XC'])
     XTENSA_GCC_LD.append(EXTRA_FLAGS['O'])
     XTENSA_GCC_LD.append(file_names['ld'])
-    XTENSA_GCC_LD.extend(LIBRARIES)
+    XTENSA_GCC_LD.extend(CPREPROCESSOR_FLAGS)
     XTENSA_GCC_LD.extend(board_options)
     XTENSA_GCC_LD.append(EXTRA_FLAGS['I'])
     XTENSA_GCC_LD.append(os.path.join(build_path, 'sketch'))

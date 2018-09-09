@@ -1,3 +1,7 @@
+><b>Updated (9/8/18 v1.8.0)</b><br>
+* Now uses cpreprocessor flags from platform.txt instead of being hardcoded.<br>
+* Uses argparse now.<br>
+
 ><b>Updated (8/17/18 v1.7.0)</b><br>
 * Update platform.txt to arduino-esp32 v1.0.0 and ulp assembly compile<br>
 * Add comment to increase ulp memory in examples<br>
