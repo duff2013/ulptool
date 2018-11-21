@@ -1,3 +1,6 @@
+><b>Updated (11/20/18 v1.8.2)</b><br>
+Updated platform.txt to newest version.<br>
+
 ><b>Updated (9/8/18 v1.8.1)</b><br>
 * Fix indents.<br>
 

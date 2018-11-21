@@ -1,4 +1,4 @@
-Arduino ULP v1.8.1
+Arduino ULP v1.8.2
 ==================
 The last update breaks ulp assembly compiling for some older versions of arduino-esp32, please update your core to the latest for this to work.
 
@@ -14,7 +14,7 @@ Setup Steps:
 4. In the 'arduino_ulp' repository folder you downloaded, copy the folder 'ulp' to .../esp32/tools/sdk/include/ replacing the existing folder named 'ulp'."
 5. In the 'arduino_ulp' repository folder you downloaded, copy the file 'platform.txt' to ../esp32 replacing the one you have. If you want, just remain the old "platform.txt" so you can revert back.
 6. In the 'arduino_ulp' repository folder you downloaded, copy the 'ulp_example' folder to where Arduino saves your sketches. 
-7. Copy the pre-compiled binutils-esp32ulp toolchain you downloaded to .../esp32/tools.
+7. Unpack and copy the folder of the pre-compiled binutils-esp32ulp toolchain you downloaded to .../esp32/tools.
 
 Thats it, you now have all the files in place, lets look at very simple example to get you compiling ulp assembly code!
 
