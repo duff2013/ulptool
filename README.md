@@ -9,8 +9,11 @@ Setup Steps:
 1. Download the latest release of this repository and unpack-> 'arduino_ulp'. https://github.com/duff2013/arduino_ulp/releases/latest
 2. Download the latest pre-compiled binutils-esp32ulp toolchain for Mac/Linux/Windows: https://github.com/espressif/binutils-esp32ulp/releases/latest
 3. Find your Arduino-esp32 core directory which Arduino IDE uses: 
+
             Typically (Mac OS) -> ~/Library/Arduino15/packages/esp32
+            
             Typically (Windows) ->?
+            
             Typically (Linux) ->?
 4. In the 'arduino_ulp' release you downloaded and unpacked, copy the folder 'ulp' to .../esp32/hardware/esp32/1.0.0/tools/sdk/include/ replacing the existing folder named 'ulp', "1.0.0" is the version number of the core you installed, change version number accordingly.
 5. In the 'arduino_ulp' repository folder you downloaded and unpacked, copy the file 'platform.txt' to ../esp32/hardware/esp32/1.0.0/ replacing the one you have. If you want, just remain the old "platform.txt" so you can revert back. Remeber "1.0.0" has to match your version.
