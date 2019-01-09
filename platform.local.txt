@@ -1,0 +1,8 @@
+tools.ulptool.cmd=python {runtime.platform.path}/tools/esp32ulp_build_recipe.py
+compiler.ulp.path="{runtime.platform.path}/tools/esp32ulp-elf-binutils/bin/"
+
+recipe.hooks.core.postbuild.01.pattern={tools.ulptool.cmd} {compiler.cpreprocessor.flags} -b {build.path} -p {runtime.platform.path} -u {compiler.ulp.path} -x {compiler.path} --DF_CPU={build.f_cpu} --DARDUINO={runtime.ide.version} --DARDUINO_={build.board} --DARDUINO_ARCH_={build.arch} --DARDUINO_BOARD="{build.board}" --DARDUINO_VARIANT="{build.variant}"
+
+# It seems like this should work, but it doesn't :(
+# Instead, we patch it into the middle of compiler.c.elf.flags in install.sh
+#compiler.c.elf.extra_flags="-L{build.path}/sketch/" -T ulp_main.ld

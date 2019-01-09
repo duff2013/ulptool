@@ -108,7 +108,7 @@ def build_ulp(build_path, platform_path, xtensa_path, ulp_path, ulp_sfiles, boar
         proc = subprocess.Popen(cmd[1],stdout=subprocess.PIPE,stderr=subprocess.STDOUT,shell=False)
         (out, err) = proc.communicate()
         if err:
-            error_string = cmd[0] + '\n' + out
+            error_string = cmd[0] + '\n' + err
             sys.exit(error_string)
         else:
             console_string += cmd[0] + '\n'
@@ -128,7 +128,7 @@ def build_ulp(build_path, platform_path, xtensa_path, ulp_path, ulp_sfiles, boar
     proc = subprocess.Popen(cmd[1],stdout=subprocess.PIPE,stderr=subprocess.PIPE,shell=False)
     (out, err) = proc.communicate()
     if err:
-        error_string = cmd[0] + '\n' + out
+        error_string = cmd[0] + '\n' + err
         sys.exit(error_string)
     else:
         console_string += cmd[0] + '\n'
@@ -138,7 +138,7 @@ def build_ulp(build_path, platform_path, xtensa_path, ulp_path, ulp_sfiles, boar
     proc = subprocess.Popen(cmd[1],stdout=subprocess.PIPE,stderr=subprocess.PIPE,shell=False)
     (out, err) = proc.communicate()
     if err:
-        error_string = cmd[0] + '\n' + out
+        error_string = cmd[0] + '\n' + err
         sys.exit(error_string)
     else:
         console_string += cmd[0] + '\n'
@@ -148,7 +148,7 @@ def build_ulp(build_path, platform_path, xtensa_path, ulp_path, ulp_sfiles, boar
     proc = subprocess.Popen(cmd[1],stdout=subprocess.PIPE,stderr=subprocess.PIPE,shell=False)
     (out, err) = proc.communicate()
     if err:
-        error_string = cmd[0] + '\n' + out
+        error_string = cmd[0] + '\n' + err
         sys.exit(error_string)
     else:
         file_names_constant = gen_file_names_constant()
@@ -161,7 +161,7 @@ def build_ulp(build_path, platform_path, xtensa_path, ulp_path, ulp_sfiles, boar
     proc = subprocess.Popen(cmd[1],stdout=subprocess.PIPE,stderr=subprocess.PIPE,shell=False)
     (out, err) = proc.communicate()
     if err:
-        error_string = cmd[0] + '\n' + out
+        error_string = cmd[0] + '\n' + err
         sys.exit(error_string)
     else:
         console_string += cmd[0] + '\n'
@@ -171,7 +171,7 @@ def build_ulp(build_path, platform_path, xtensa_path, ulp_path, ulp_sfiles, boar
     proc = subprocess.Popen(cmd[1],stdout=subprocess.PIPE,stderr=subprocess.PIPE,shell=False)
     (out, err) = proc.communicate()
     if err:
-        error_string = cmd[0] + '\n' + out
+        error_string = cmd[0] + '\n' + err
         sys.exit(error_string)
     else:
         console_string += cmd[0] + '\n'
@@ -181,7 +181,7 @@ def build_ulp(build_path, platform_path, xtensa_path, ulp_path, ulp_sfiles, boar
     proc = subprocess.Popen(cmd[1],stdout=subprocess.PIPE,stderr=subprocess.PIPE,shell=False)
     (out, err) = proc.communicate()
     if err:
-        error_string = cmd[0] + '\n' + out
+        error_string = cmd[0] + '\n' + err
         sys.exit(error_string)
     else:
         console_string += cmd[0] + '\n'
@@ -191,7 +191,7 @@ def build_ulp(build_path, platform_path, xtensa_path, ulp_path, ulp_sfiles, boar
     proc = subprocess.Popen(cmd[1],stdout=subprocess.PIPE,stderr=subprocess.PIPE,shell=False)
     (out, err) = proc.communicate()
     if err:
-        error_string = cmd[0] + '\n' + out
+        error_string = cmd[0] + '\n' + err
         sys.exit(error_string)
     else:
         console_string += cmd[0]
