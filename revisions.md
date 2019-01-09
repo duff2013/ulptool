@@ -1,3 +1,6 @@
+><b>Updated (1/8/19 v2.0.0)</b><br>
+* Updated to use the esp32 core installed by the Arduino board manager now since its the preferred way to install now.<br>
+
 ><b>Updated (11/20/18 v1.8.2)</b><br>
 Updated platform.txt to newest version.<br>
 
