@@ -265,7 +265,7 @@ def gen_xtensa_ld_cmd(build_path, platform_path, compiler_path, file, board_opti
     XTENSA_GCC_LD.append(EXTRA_FLAGS['I'])
     XTENSA_GCC_LD.append(os.path.join(build_path, 'sketch'))
     XTENSA_GCC_LD.append(EXTRA_FLAGS['D__ASSEMBLER__'])
-    XTENSA_GCC_LD.append(os.path.join(platform_path, 'tools', 'sdk', 'include', 'ulp', 'ld', 'esp32.ulp.ld'))
+    XTENSA_GCC_LD.append(os.path.join(platform_path, 'tools', 'sdk', 'ld', 'esp32.ulp.ld'))
     STR_CMD = ' '.join(XTENSA_GCC_LD)
     return STR_CMD, XTENSA_GCC_LD
 
@@ -385,7 +385,7 @@ def gen_cmds(path):
     #cmds['ULP_LD']        = os.path.join(path, 'esp32ulp-elf-binutils','bin','esp32ulp-elf-ld')
     #cmds['ULP_NM']        = os.path.join(path, 'esp32ulp-elf-binutils','bin','esp32ulp-elf-nm')
     #cmds['ULP_OBJCPY']    = os.path.join(path, 'esp32ulp-elf-binutils','bin','esp32ulp-elf-objcopy')
-    cmds['ULP_MAPGEN']    = os.path.join(path, 'sdk','include','ulp','esp32ulp_mapgen.py')
+    cmds['ULP_MAPGEN']    = os.path.join(path, 'esp32ulp_mapgen.py')
     return cmds
 
 def gen_xtensa_cmds(path):
