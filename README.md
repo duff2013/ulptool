@@ -14,7 +14,7 @@ Setup Steps:
 
             Typically (Mac OS) -> ~/Library/Arduino15/packages/esp32
             
-            Typically (Windows) ->?
+            Typically (Windows) -> C:\Users\<USERNAME>\AppData\Local\Arduino15\packages\esp32
             
             Typically (Linux) ->?
 4. In the 'arduino_ulp' release you downloaded and unpacked, copy the folder 'ulp' to **.../esp32/hardware/esp32/1.0.0/tools/sdk/include/** replacing the existing folder named 'ulp', "1.0.0" is the version number of the core you installed, change version number accordingly.
