@@ -142,7 +142,7 @@ def build_ulp(build_path, platform_path, xtensa_path, ulp_path, ulp_sfiles, boar
         error_string = cmd[0] + '\n' + err.decode("utf-8")# + " :line 141"
         sys.exit(error_string)
     else:
-        print(cmd[0])
+        print(cmd[0].replace('\n',''))
 
     ## Link object files into an output ELF file
     cmd = gen_binutils_ld_cmd(build_path, ulp_path, ulp_sfiles, board_options)
