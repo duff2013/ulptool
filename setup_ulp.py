@@ -109,7 +109,7 @@ def main(argv):
     os.chdir(directory)
     shutil.rmtree(os.path.abspath(temp_dir))
     print("Execution time: " + str(time.time()-start_time) + " seconds")
-    input("Press any key to quit.")
+    pause()
 
 ##  Function to create a directory
 ##  (https://gist.github.com/keithweaver/562d3caa8650eefe7f84fa074e9ca949)
@@ -120,6 +120,12 @@ def createFolder(directory):
     except OSError:
         print ('Error: Creating directory. ' +  directory)
 
+
+def pause():
+    if sys.version_info[0]>2:
+        input("Press any key to quit.")
+    else:
+        raw_input("Press any key to quit.")
 def unzip():
     zip_list = glob.glob('*.zip')
     tar_gz_list = glob.glob('*.tar.gz')
@@ -142,3 +148,4 @@ def unzip():
 
 if __name__ == '__main__':
     main(sys.argv[1:])
+	
