@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+
 # esp32ulp_mapgen utility converts a symbol list provided by nm into an export script
 # for the linker and a header file.
 #
@@ -19,10 +19,14 @@ def gen_ld_h_from_sym(f_sym, f_ld, f_h):
     f_h.write("#pragma once\n\n")
 
     for line in f_sym:
-        name, _, addr_str = line.split()
-        addr = int(addr_str, 16) + BASE_ADDR
-        f_h.write("extern uint32_t ulp_{0};\n".format(name))
-        f_ld.write("PROVIDE ( ulp_{0} = 0x{1:08x} );\n".format(name, addr))
+        try:
+            print("Line: " + line)
+            name, _, addr_str = line.split()
+            addr = int(addr_str, 16) + BASE_ADDR
+            f_h.write("extern uint32_t ulp_{0};\n".format(name))
+            f_ld.write("PROVIDE ( ulp_{0} = 0x{1:08x} );\n".format(name, addr))
+        except:
+            print("No data")	# Here to avoid the blank line.
 
 
 def main():
@@ -35,8 +39,8 @@ def main():
                       help="symbols file name", metavar="SYMFILE")
     parser.add_option("-o", "--outputfile", dest="outputfile",
                       help="destination .h and .ld files name prefix", metavar="OUTFILE")
-
     (options, args) = parser.parse_args()
+
     if options.symfile is None:
         parser.print_help()
         return 1
