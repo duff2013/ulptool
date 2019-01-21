@@ -1,5 +1,6 @@
-# -*- coding: utf-8 -*-
 #! python3.7
+# -*- coding: utf-8 -*-
+
 import wget # Download
 
 ## OS interactions
@@ -7,7 +8,6 @@ import os
 import sys
 import glob
 import shutil
-import platform # https://stackoverflow.com/questions/110362/how-can-i-find-the-current-os-in-python
 import getpass # https://www.saltycrane.com/blog/2011/11/how-get-username-home-directory-and-hostname-python/
 
 import zipfile # Extract zip files
@@ -23,14 +23,16 @@ binutils_win_url = "https://github.com/espressif/binutils-esp32ulp/releases/down
 binutils_linux_url = "https://github.com/espressif/binutils-esp32ulp/releases/download/v2.28.51-esp32ulp-20180809/binutils-esp32ulp-linux64-2.28.51-esp32ulp-20180809.tar.gz"
 binutils_mac_url = "https://github.com/espressif/binutils-esp32ulp/releases/download/v2.28.51-esp32ulp-20180809/binutils-esp32ulp-macos-2.28.51-esp32ulp-20180809.tar.gz"
 
+## System parameters
 directory = os.getcwd()
-system = platform.system()
-temp_dir = "./temp_" + str(time.time())
+
+temp_dir = "temp_" + str(time.time())
 win_dir = "C:\\Users\\<USERNAME>\\AppData\\Local\\Arduino15\\packages\\esp32"
 lin_dir = "~/Library/Arduino15/packages/esp32"
 mac_dir = "~/Library/Arduino15/packages/esp32"
+
 wdir = "" # Working directory
-core_version = "1.0.0" # 1.0.0 by default
+core_version = "1.0.0" # 1.0.0 by default, will be determinated after the OS
 
 """
 In the 'arduino_ulp' release you downloaded and unpacked, copy the folder 'ulp' to .../esp32/hardware/esp32/1.0.0/tools/sdk/include/ replacing the existing folder named 'ulp', "1.0.0" is the version number of the core you installed, change version number accordingly.
@@ -45,58 +47,67 @@ Unpack and copy the folder of the pre-compiled binutils-esp32ulp toolchain you d
 """
 
 def main(argv):
-    print("Try to create a temp folder")
-    createFolder(temp_dir)
+    print("Try to create a temp folder (" + os.path.abspath(temp_dir) + ")")
+    createFolder(os.path.abspath(temp_dir))
     print("Move to the temp directory and begin download")
-    os.chdir(temp_dir)
+    os.chdir(os.path.abspath(temp_dir))
     wget.download(url)
-    
-    # system = "Linux" # To test tar decrompression
-    if system=="Windows":
+
+    # See https://docs.python.org/3/library/sys.html#sys.platform
+    if sys.platform.startswith('win32'):
         wget.download(binutils_win_url)
-        wdir = win_dir.replace("<USERNAME>", getpass.getuser())        
-        #print(system)
+        wdir = win_dir.replace("<USERNAME>", getpass.getuser())
 	
-    elif system=="Linux":
+    elif sys.platform.startswith('linux'):
         wget.download(binutils_linux_url)
         wdir = lin_dir
 	
-    elif system=="Mac":
+    elif sys.platform.startswith('darwin'):
         wget.download(binutils_mac_url)
         wdir = mac_dir
 	
     else:
-        print("Unsupported operating system: " + system)
+        print("Unsupported operating system: " + sys.platform)
         exit(0)
-        
+
+    ## Uncompress all the files
     print("\nUncompress the files in temp")
     unzip()
-    core_version = os.listdir(wdir + '\\hardware\\esp32')[0]
-    print("ESP32 core version: " + core_version)
-    print("\n(1/3) Copy the /ulp folder")
-    os.chdir('./arduino_ulp-master')
-    ulp_dir = wdir + "/hardware/esp32/" + core_version + "/tools/sdk/include/ulp"
-    shutil.rmtree(ulp_dir)
-    shutil.copytree('./ulp', ulp_dir)
-    print("(2/3) Copy the plateform.txt file")
-    plt_dir = wdir + "/hardware/esp32/" + core_version + "/"
-    shutil.copyfile('platform.txt', plt_dir + 'platform.txt')
-    print("(3/3) Copy /binutils folder\n")
-    
-    os.chdir(directory), os.chdir(temp_dir)
-    bin_dir = wdir + "/tools/binutils/esp32ulp-elf-binutils"
-    try:
-        shutil.copytree('./esp32ulp-elf-binutils', bin_dir)
-    except:
-        shutil.rmtree(bin_dir)
-        shutil.copytree('./esp32ulp-elf-binutils', bin_dir)
-        
-    print("Go back in the setup directory and remove the temp folder")
-    #input()
-    os.chdir(directory)
-    shutil.rmtree(temp_dir)
 
-    #wget.download(url)
+    ## Find and print the core version
+    core_version = os.listdir(os.path.join(wdir,'hardware','esp32'))[0]
+    print("ESP32 core version: " + core_version)
+    
+    ## Copy the 'ulp' folder
+    print("\n(1/3) Copy the 'ulp' folder")
+    os.chdir(os.path.abspath('arduino_ulp-master'))
+    ulp_dir = os.path.join(wdir,'hardware','esp32', core_version, 'tools', 'sdk', 'include', 'ulp')
+    try:
+        shutil.rmtree(ulp_dir)
+    except:
+        print("No 'ulp' directory, 'ulp' will be created")
+    shutil.copytree(os.path.abspath('ulp'), ulp_dir)
+	
+    ## Copy the 'platform.txt' file
+    print("(2/3) Copy the 'platform.txt' file")
+    plt_dir = os.path.join(wdir,'hardware','esp32', core_version)
+    shutil.copyfile('platform.txt', os.path.join(plt_dir, 'platform.txt'))
+
+    ## Copy the 'binutils'
+    print("(3/3) Copy 'binutils' folder\n")
+    os.chdir(directory), os.chdir(temp_dir)
+    bin_dir = os.path.join(wdir,'tools', 'binutils', 'esp32ulp-elf-binutils')
+    try:
+        shutil.copytree(os.path.abspath('esp32ulp-elf-binutils'), bin_dir)
+    except:
+        print("Overwritte 'esp32ulp-elf-binutils'")
+        shutil.rmtree(bin_dir)
+        shutil.copytree(os.path.abspath('esp32ulp-elf-binutils'), bin_dir)
+
+    ## Remove the 'temp' directory
+    print("Go back in the 'setup' directory and remove the 'temp' directory (" + temp_dir + ")")
+    os.chdir(directory)
+    shutil.rmtree(os.path.abspath(temp_dir))
     print("Execution time: " + str(time.time()-start_time) + " seconds")
     input("Press any key to quit.")
 
