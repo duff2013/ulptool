@@ -1,7 +1,5 @@
-Arduino ULP v2.0.0
+ulptool v2.0.0
 ==================
-
-#### This repository will be renamed to "ulptool" in the coming days. I'll update all relevant links when the name change happens.
 
 This guide explains how to setup Arduino to use ULP coprocessor assembly files for your esp32 projects using the preferred method of the board manager to install the esp32 core. **The old method of manually installing the esp32 core is no longer supported**. Currently the how-to is only geared for MacOS and has not been tested with Windows or Linux at this time. Python 2.7 is required and python3 will not currently work. Being beta many things could go wrong so let me know if you encounter any issues.
 
