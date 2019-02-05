@@ -1,12 +1,13 @@
 ulptool v2.1.0
 ==================
-This guide explains how to setup Arduino to use ULP coprocessor assembly files for your esp32 projects. This guide assumes you installed the esp32 core with the preferred method of the board manager. 
+This guide explains how to setup Arduino to use ULP coprocessor assembly files for your esp32 projects. This guide assumes you installed the esp32 core with the preferred method of the board manager.
 
 Typically in Arduino you can compile assembly files using the '.S' extension. Using the ESP32 Arduino core framework these files would correspond to the Xtensa processors whose toolchain is incompatible with the ULP coprocessor. Luckily, Arduino provides a fairly easy albeit not that flexible build framework using series of recipes. This guide extends those esp32 recipes for building the ULP assembly files. We will use the '.s' extensions for ULP assembly files which Arduino will let you create. Remember thats a lower case 's'. I tried to keep the ulp build process the same as the esp-if framework with only a few small modifications the user needs to do in order to compile in Arduino.
 
 Manual Setup Steps:
 ============
 1. Download the latest release of this repository and unpack-> 'ulptool'. https://github.com/duff2013/ulptool/releases/latest
+delete the release version number so the folder is just called 'ulptool'
 
 2. Download and unpack the latest pre-compiled binutils-esp32ulp toolchain for Mac/Linux/Windows: https://github.com/espressif/binutils-esp32ulp/releases/latest
 
