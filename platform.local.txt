@@ -1,0 +1,17 @@
+version=1.0.1
+
+## paths
+compiler.ulp.path={runtime.tools.ulptool.path}/esp32ulp-elf-binutils/bin/
+tools.ulptool.path={runtime.tools.ulptool.path}/
+
+## tool name
+tools.ulptool.cmd=esp32ulp_build_recipe.py
+
+## ulp build tool
+compiler.s.cmd=python "{tools.ulptool.path}{tools.ulptool.cmd}"
+
+## ulp_main.ld file address
+compiler.c.elf.extra_flags="-L{build.path}/sketch/" -T ulp_main.ld "{build.path}/sketch/ulp_main.bin.bin.o"
+
+## Compile s (ulp) files
+recipe.hooks.core.postbuild.01.pattern={compiler.s.cmd} {compiler.cpreprocessor.flags} -b {build.path} -p {runtime.platform.path} -u {compiler.ulp.path} -x {compiler.path} -t {tools.ulptool.path} --DF_CPU={build.f_cpu} --DARDUINO={runtime.ide.version} --DARDUINO_={build.board} --DARDUINO_ARCH_={build.arch} --DARDUINO_BOARD="{build.board}" --DARDUINO_VARIANT="{build.variant}"

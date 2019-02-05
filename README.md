@@ -1,32 +1,30 @@
-ulptool v2.0.0
+ulptool v2.1.0
 ==================
-
-This guide explains how to setup Arduino to use ULP coprocessor assembly files for your esp32 projects using the preferred method of the board manager to install the esp32 core. **The old method of manually installing the esp32 core is no longer supported**. Currently the how-to is only geared for MacOS and has not been tested with Windows or Linux at this time. Python 2.7 is required and python3 will not currently work. Being beta many things could go wrong so let me know if you encounter any issues.
+This guide explains how to setup Arduino to use ULP coprocessor assembly files for your esp32 projects. This guide assumes you installed the esp32 core with the preferred method of the board manager. 
 
 Typically in Arduino you can compile assembly files using the '.S' extension. Using the ESP32 Arduino core framework these files would correspond to the Xtensa processors whose toolchain is incompatible with the ULP coprocessor. Luckily, Arduino provides a fairly easy albeit not that flexible build framework using series of recipes. This guide extends those esp32 recipes for building the ULP assembly files. We will use the '.s' extensions for ULP assembly files which Arduino will let you create. Remember thats a lower case 's'. I tried to keep the ulp build process the same as the esp-if framework with only a few small modifications the user needs to do in order to compile in Arduino.
 
-Setup Steps:
+Manual Setup Steps:
 ============
-1. Download the latest release of this repository and unpack-> 'arduino_ulp'. https://github.com/duff2013/arduino_ulp/releases/latest
+1. Download the latest release of this repository and unpack-> 'ulptool'. https://github.com/duff2013/ulptool/releases/latest
 
-2. Download the latest pre-compiled binutils-esp32ulp toolchain for Mac/Linux/Windows: https://github.com/espressif/binutils-esp32ulp/releases/latest
+2. Download and unpack the latest pre-compiled binutils-esp32ulp toolchain for Mac/Linux/Windows: https://github.com/espressif/binutils-esp32ulp/releases/latest
 
-3. Find your Arduino-esp32 core directory which Arduino IDE uses: 
+3. Find your Arduino-esp32 core directory which Arduino IDE uses:
 
             Typically (Mac OS) -> ~/Library/Arduino15/packages/esp32
-            
+
             Typically (Windows) -> C:\Users\<USERNAME>\AppData\Local\Arduino15\packages\esp32
-            
+
             Typically (Linux) ->?
-4. In the 'arduino_ulp' release you downloaded and unpacked, copy the folder 'ulp' to **.../esp32/hardware/esp32/1.0.0/tools/sdk/include/** replacing the existing folder named 'ulp', "1.0.0" is the version number of the core you installed, change version number accordingly.
 
-5. In the 'arduino_ulp' repository folder you downloaded and unpacked, copy the file 'platform.txt' to **.../esp32/hardware/esp32/1.0.0/** replacing the one you have. If you want, just remain the old "platform.txt" so you can revert back. Remember "1.0.0" has to match your version.
+4. Move the **ulptool** folder you downloaded and unpacked to the tools folder here -> **.../esp32/tools/**.
 
-6. In the 'arduino_ulp' release you downloaded, copy the 'ulp_example' folder to where Arduino saves your sketches. 
+5. Copy the 'platform.local.txt' file to **.../esp32/hardware/esp32/1.0.0/**. Remember **1.0.0** has to match your esp32 core version.
 
-7. Create a new folder named exactly 'binutils' in directory **.../esp32/tools/**
+6. In the **ulptool** release you downloaded, move or copy the **.../esp32/tools/ulptool/src/ulp_examples** folder to where Arduino saves your sketches.
 
-8. Unpack and copy the folder of the pre-compiled binutils-esp32ulp toolchain you downloaded to **.../esp32/tools/binutils/**
+7. Move **esp32ulp-elf-binutils** folder you downloaded and unpacked to -> **.../esp32/tools/ulptool/src/**.
 
 Thats it, you now have all the files in place, lets look at very simple example to get you compiling ulp assembly code!
 
@@ -80,7 +78,7 @@ count:
     .global entry
 entry:
     move    r3, count
-    ld      r0, r3, 0 
+    ld      r0, r3, 0
     add     r0, r0, 1
     st      r0, r3, 0
     halt
