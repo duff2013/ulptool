@@ -19,10 +19,14 @@ def gen_ld_h_from_sym(f_sym, f_ld, f_h):
     f_h.write("#pragma once\n\n")
 
     for line in f_sym:
-        name, _, addr_str = line.split()
-        addr = int(addr_str, 16) + BASE_ADDR
-        f_h.write("extern uint32_t ulp_{0};\n".format(name))
-        f_ld.write("PROVIDE ( ulp_{0} = 0x{1:08x} );\n".format(name, addr))
+        line = line.replace('\n','').replace('\r','')
+        try:
+            name, _, addr_str = line.split()
+            addr = int(addr_str, 16) + BASE_ADDR
+            f_h.write("extern uint32_t ulp_{0};\n".format(name))
+            f_ld.write("PROVIDE ( ulp_{0} = 0x{1:08x} );\n".format(name, addr))
+        except:
+            pass
 
 
 def main():
