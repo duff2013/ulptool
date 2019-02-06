@@ -110,4 +110,4 @@ While almost a complete solution to programing the ULP coprocessor in assembly, 
 
 1. Not tested with Windows or Linux yet.
 2. Errors can be non-informative.
-3. Probably more that I can't think of now...
+3. Changing the ulp memory size is not working fully yet.
