@@ -1,11 +1,15 @@
 ulptool v2.1.0
-==================
+==============
 This guide explains how to setup Arduino to use ULP coprocessor assembly files for your esp32 projects. This guide assumes you installed the esp32 core with the preferred method of the board manager.
 
 Typically in Arduino you can compile assembly files using the '.S' extension. Using the ESP32 Arduino core framework these files would correspond to the Xtensa processors whose toolchain is incompatible with the ULP coprocessor. Luckily, Arduino provides a fairly easy albeit not that flexible build framework using series of recipes. This guide extends those esp32 recipes for building the ULP assembly files. We will use the '.s' extensions for ULP assembly files which Arduino will let you create. Remember thats a lower case 's'. I tried to keep the ulp build process the same as the esp-if framework with only a few small modifications the user needs to do in order to compile in Arduino.
 
+Installer (*setup.py*):
+======================
+Run *setup.py*, it will install the tools from this repository and binutils. It is possible to run the setup offline if you launch it from the extrated archive of this directory and if you download the correct binutils tool for your OS and put it in the same directory (extracted or as an archive) as the script (*setup.py*).
+
 Manual Setup Steps:
-============
+==================
 1. Download the latest release of this repository and unpack-> 'ulptool'. https://github.com/duff2013/ulptool/releases/latest
 delete the release version number so the folder is just called 'ulptool'
 
@@ -15,9 +19,11 @@ delete the release version number so the folder is just called 'ulptool'
 
             Typically (Mac OS) -> ~/Library/Arduino15/packages/esp32
 
-            Typically (Windows) -> C:\Users\<USERNAME>\AppData\Local\Arduino15\packages\esp32
+            Typically (Windows) -> ~\AppData\Local\Arduino15\packages\esp32 ('~\' = 'C:\Users\<USERNAME>\')
+            
+            Typically (Windows older Arduino installation) -> ~\AppData\Local\Arduino15\packages\esp32
 
-            Typically (Linux) ->?
+            Typically (Linux) -> ~/.arduino15/packages/esp32
 
 4. Move the **ulptool** folder you downloaded and unpacked to the tools folder here -> **.../esp32/tools/**.
 
