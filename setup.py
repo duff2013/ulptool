@@ -9,12 +9,22 @@ Todo :
 [x] Install ULP examples in the skecth directory (need to read preference file)
 [ ] Add supported core version check from file
 
+What this script does (hybrid online or offline installation are possible):
+
+[x] Move the ulptool folder you downloaded and unpacked to the tools folder here -> .../esp32/tools/.
+
+[x] Copy the 'platform.local.txt' file to .../esp32/hardware/esp32/1.0.0/. Remember 1.0.0 has to match your esp32 core version.
+
+[x] In the ulptool release you downloaded, move or copy the .../esp32/tools/ulptool/src/ulp_examples folder to where Arduino saves your sketches.
+
+[x] Move esp32ulp-elf-binutils folder you downloaded and unpacked to -> .../esp32/tools/ulptool/src/.
 
 Tested on:
 
 Windows 10, Python 3 and 2
 """
 
+## 'wget' isn't a base Python lib
 try:
     import wget # Download
 except:
@@ -43,11 +53,9 @@ import tarfile
 import time
 start_time = time.time()
 
-url = "https://github.com/duff2013/ulptool/archive/master.zip"
-# url = https://github.com/2010019970909/ulptool/archive/master.zip
-
-## url to get the JSON from the binutils Github
+## url to get the JSON from the 'binutils' and 'ulptool' Github
 url_binutils = "https://api.github.com/repos/espressif/binutils-esp32ulp/releases"
+url_ulptool = "https://api.github.com/repos/duff2013/ulptool/releases"
 
 ## System parameters
 directory = os.getcwd()
@@ -61,18 +69,6 @@ mac_dir = "~/Library/Arduino15/packages/esp32"
 wdir = "" # Working directory
 # core_version = "1.0.0" # 1.0.0 by default, will be determinated after the OS
 supported_core_version = ['1.0.0', '1.0.1'] # We can imagine to update this variable from the directory
-
-"""
-What this script does (online or offline installation are possible):
-
-[x] Move the ulptool folder you downloaded and unpacked to the tools folder here -> .../esp32/tools/.
-
-[x] Copy the 'platform.local.txt' file to .../esp32/hardware/esp32/1.0.0/. Remember 1.0.0 has to match your esp32 core version.
-
-[x] In the ulptool release you downloaded, move or copy the .../esp32/tools/ulptool/src/ulp_examples folder to where Arduino saves your sketches.
-
-[x] Move esp32ulp-elf-binutils folder you downloaded and unpacked to -> .../esp32/tools/ulptool/src/.
-"""
 
 def main(argv):
     flag_linux32 = 0
@@ -89,11 +85,14 @@ def main(argv):
     clean_binutils = 0
 
     ## Check if we are in the 'ulptool-master' folder
-    if os.path.basename(directory).startswith("ulptool") and os.path.exists(os.path.join(directory, 'src')) and os.path.exists(os.path.join(directory, 'platform.local.txt')):
+    if (os.path.basename(directory).startswith("ulptool") or os.path.basename(directory).startswith("duff2013-ulptool")) and os.path.exists(os.path.join(directory, 'src')) and os.path.exists(os.path.join(directory, 'platform.local.txt')):
         ulp_offline = 1
+        ulp_dirname = os.path.basename(directory)         
         print("ULP tools install, offline mode")
+
     else:
         print("Download 'ULP tools' files")
+        url = get_ulptool_lr()[1]
         dl(url)
         
     # See https://docs.python.org/3/library/sys.html#sys.platform
@@ -204,6 +203,10 @@ def main(argv):
         print("\nExtract the files in temp")
         os.chdir(os.path.join(directory, temp_dir))
         unzip()
+        
+        if not ulp_offline:
+            ulp_dirname,_ = filedirstartswith("duff2013-ulptool")   ## Find the folder name, since this one is unknown before download, we have to find it...
+            ulp_dirname = ulp_dirname[0]
 
     ## Find and print the core version(s) and check compatibility
     try:    
@@ -234,7 +237,7 @@ def main(argv):
             if ulp_offline:
                 os.chdir(directory)
             else:
-                os.chdir(os.path.join(directory, temp_dir ,'ulptool-master'))
+                os.chdir(os.path.join(directory, temp_dir , ulp_dirname))
 
             print("(" + str(i) + "/" + nbr_step + ") Copy the 'platform.local.txt' file.")
             i += 1
@@ -277,7 +280,7 @@ def main(argv):
         print("(" + str(i) + "/" + nbr_step + ") Copy the 'ulptool' folder.")
         i += 1
 
-        ulp_wdir = directory if ulp_offline else os.path.join(directory, temp_dir, 'ulptool-master')
+        ulp_wdir = directory if ulp_offline else os.path.join(directory, temp_dir, ulp_dirname)
         shutil.copytree(os.path.join(ulp_wdir , 'src', 'esp32'), os.path.join(ulptool_dir, 'src', 'esp32'))
         shutil.copytree(os.path.join(ulp_wdir , 'src', 'ld'), os.path.join(ulptool_dir, 'src', 'ld'))
         shutil.copyfile(os.path.join(ulp_wdir , 'README.md'), os.path.join(ulptool_dir, 'README.md'))
@@ -304,6 +307,12 @@ def main(argv):
     pause()
     exit(0)
 
+        ######################################
+        ##                                  ##
+        ##      Functions' definitions      ##
+        ##                                  ##
+        ######################################
+    
 ##  Function to create a directory
 ##  (https://gist.github.com/keithweaver/562d3caa8650eefe7f84fa074e9ca949)
 def createFolder(directory):
@@ -440,6 +449,18 @@ def get_sketchpath():
                         return dir
                     else:
                         return None
+                    
+def get_ulptool_lr(url_ulptool = None):
+    if url_ulptool == None:
+        url_ulptool = "https://api.github.com/repos/duff2013/ulptool/releases"
+    data = get_json(url_ulptool)
+    release = "0.0.0", 0
+    
+    for i in range(len(data)):
+        if data[i]["prerelease"] == False:
+            release = (data[i]["tag_name"], i) if data[i]["tag_name"]>release[0] else release
+
+    return data[release[1]]["tarball_url"], data[release[1]]["zipball_url"] 
 
 if __name__ == '__main__':
     main(sys.argv[1:])
