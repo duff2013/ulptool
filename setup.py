@@ -12,8 +12,7 @@ Todo :
 
 Tested on:
 
-Windows 10, Python 3 and Python 2
-Linux Mint 19.1, Python 3 and Python 2
+Windows 10, Python 3 and 2
 """
 
 try:
@@ -37,7 +36,6 @@ import os
 import sys
 import glob
 import shutil
-import getpass # https://www.saltycrane.com/blog/2011/11/how-get-username-home-directory-and-hostname-python/
 
 import zipfile # Extract zip files
 import tarfile
@@ -46,13 +44,8 @@ import time
 start_time = time.time()
 
 url = "https://github.com/duff2013/ulptool/archive/master.zip"
-# url = "https://github.com/2010019970909/arduino_ulp/archive/master.zip"
-"""
-## Need to be manualy updated
-binutils_win_url = "https://github.com/espressif/binutils-esp32ulp/releases/download/v2.28.51-esp32ulp-20180809/binutils-esp32ulp-win32-2.28.51-esp32ulp-20180809.zip"
-binutils_linux_url = "https://github.com/espressif/binutils-esp32ulp/releases/download/v2.28.51-esp32ulp-20180809/binutils-esp32ulp-linux64-2.28.51-esp32ulp-20180809.tar.gz"
-binutils_mac_url = "https://github.com/espressif/binutils-esp32ulp/releases/download/v2.28.51-esp32ulp-20180809/binutils-esp32ulp-macos-2.28.51-esp32ulp-20180809.tar.gz"
-"""
+# url = https://github.com/2010019970909/ulptool/archive/master.zip
+
 ## url to get the JSON from the binutils Github
 url_binutils = "https://api.github.com/repos/espressif/binutils-esp32ulp/releases"
 
