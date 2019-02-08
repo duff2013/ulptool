@@ -1,4 +1,4 @@
-version=1.0.1
+version=2.1.0
 
 ## paths
 compiler.ulp.path={runtime.tools.ulptool.path}/esp32ulp-elf-binutils/bin/

@@ -1,3 +1,8 @@
+><b>Updated (2/8/19 v2.2.0)</b><br>
+* Fixed compiling of non ulp projects.<br>
+* Changed example file name from README.ino to ulp_README.ino.<br>
+* All files versions numbers match the global version now.<br>
+
 ><b>Updated (2/5/19 v2.1.0)</b><br>
 * Now compiles for archived cores. i.e esp32 cores v1.0.0 and v1.0.1<br>
 * Changed install procedure, hopefully easier.<br>

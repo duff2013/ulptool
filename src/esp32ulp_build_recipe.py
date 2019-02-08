@@ -16,7 +16,7 @@
 #   OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #   DEALINGS IN THE SOFTWARE.
 
-# version 2.1.2
+# version 2.2.0
 import os
 import sys
 import glob
@@ -89,14 +89,19 @@ def main(argv):
 
     if not ulp_files:
         sys.stdout.write('No ULP Assembly File(s) Detected...\r')
-        with open('ulp_main.ld',"w") as fld:
-            fld.close()
+        try:
+            with open('tmp.s',"w") as ulp: pass
+            ulp_files.append('tmp.s')
+            build_ulp(bpath, ppath, xpath, upath, tpath, ulp_files, board_options, False)
+            os.remove('tmp.s')
+        except Exception as e:
+            print e
     else:
-        build_ulp(bpath, ppath, xpath, upath, tpath, ulp_files, board_options)
+        build_ulp(bpath, ppath, xpath, upath, tpath, ulp_files, board_options, True)
     sys.exit(0)
 
 
-def build_ulp(build_path, platform_path, xtensa_path, ulp_path, tool_path, ulp_sfiles, board_options):
+def build_ulp(build_path, platform_path, xtensa_path, ulp_path, tool_path, ulp_sfiles, board_options, has_s_file):
     console_string = 'ULP Assembly File(s) Detected: ' + ', '.join(ulp_sfiles) + '\r'
 
     cmds = gen_cmds(os.path.join(platform_path, 'tools'))
@@ -189,7 +194,8 @@ def build_ulp(build_path, platform_path, xtensa_path, ulp_path, tool_path, ulp_s
         console_string += cmd[0] + '\r'
 
     ## print outputs or errors to the console
-    print console_string
+    if has_s_file:
+        print console_string
 
     return 0
 

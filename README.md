@@ -1,4 +1,4 @@
-ulptool v2.1.0
+ulptool v2.2.0
 ==================
 This guide explains how to setup Arduino to use ULP coprocessor assembly files for your esp32 projects. This guide assumes you installed the esp32 core with the preferred method of the board manager.
 
