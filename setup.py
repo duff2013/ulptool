@@ -288,7 +288,10 @@ def main(argv):
         shutil.copyfile(os.path.join(ulp_wdir , 'revisions.md'), os.path.join(ulptool_dir, 'revisions.md'))
         shutil.copyfile(os.path.join(ulp_wdir , 'src', 'esp32ulp_build_recipe.py'), os.path.join(ulptool_dir, 'src', 'esp32ulp_build_recipe.py'))
         shutil.copyfile(os.path.join(ulp_wdir , 'src', 'esp32ulp_mapgen.py'), os.path.join(ulptool_dir, 'src', 'esp32ulp_mapgen.py'))
-
+	try:
+		shutil.copyfile(os.path.join(ulp_wdir , 'src', 'recipe_c_combine_pattern.py'), os.path.join(ulptool_dir, 'src', 'recipe_c_combine_pattern.py'))
+	except:
+		pass
         ## Copy the ULP example to the sketch directory
         sk_dir = get_sketchpath()
         print("(" + str(i) + "/" + nbr_step + ") Copy the 'ulp_examples' folder to your sketch directory (" + sk_dir + ").")
