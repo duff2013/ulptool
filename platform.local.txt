@@ -6,12 +6,15 @@ tools.ulptool.path={runtime.tools.ulptool.path}/
 
 ## tool name
 tools.ulptool.cmd=esp32ulp_build_recipe.py
-
+tools.ulptool.c.cmd=recipe_c_combine_pattern.py
 ## ulp build tool
 compiler.s.cmd=python "{tools.ulptool.path}{tools.ulptool.cmd}"
 
-## ulp_main.ld file address
+## ulp_main.ld file address																																																																																												
 compiler.c.elf.extra_flags="-L{build.path}/sketch/" -T ulp_main.ld "{build.path}/sketch/ulp_main.bin.bin.o"
 
 ## Compile s (ulp) files
 recipe.hooks.core.postbuild.01.pattern={compiler.s.cmd} {compiler.cpreprocessor.flags} -b {build.path} -p {runtime.platform.path} -u {compiler.ulp.path} -x {compiler.path} -t {tools.ulptool.path} --DF_CPU={build.f_cpu} --DARDUINO={runtime.ide.version} --DARDUINO_={build.board} --DARDUINO_ARCH_={build.arch} --DARDUINO_BOARD="{build.board}" --DARDUINO_VARIANT="{build.variant}"
+
+## Combine gc-sections, archives, and objects
+recipe.c.combine.pattern=python "{tools.ulptool.path}{tools.ulptool.c.cmd}" -b "{build.path}" -c "{compiler.path}{compiler.c.elf.cmd}" -f {compiler.c.elf.flags} -xf {compiler.c.elf.extra_flags} -sf -Wl,--start-group {object_files} "{archive_file_path}" {compiler.c.elf.libs} -Wl,--end-group -Wl,-EL -o "{build.path}/{build.project_name}.elf"
