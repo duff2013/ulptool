@@ -1,4 +1,4 @@
-version=1.0.1
+version=2.1.0
 
 ## paths
 compiler.ulp.path={runtime.tools.ulptool.path}/esp32ulp-elf-binutils/bin/
@@ -7,6 +7,7 @@ tools.ulptool.path={runtime.tools.ulptool.path}/
 ## tool name
 tools.ulptool.cmd=esp32ulp_build_recipe.py
 tools.ulptool.c.cmd=recipe_c_combine_pattern.py
+
 ## ulp build tool
 compiler.s.cmd=python "{tools.ulptool.path}{tools.ulptool.cmd}"
 

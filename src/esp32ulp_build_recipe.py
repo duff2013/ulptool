@@ -16,7 +16,7 @@
 #   OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #   DEALINGS IN THE SOFTWARE.
 
-# version 2.1.2
+# version 2.2.0
 import os
 import sys
 import glob
@@ -93,14 +93,16 @@ def main(argv):
 
     if not ulp_files:
         sys.stdout.write('No ULP Assembly File(s) Detected...\r')
-        with open('ulp_main.ld',"w") as fld:
-            fld.close()
+        try:
+            with open('ulp_main.ld',"w") as fld: pass
+        except Exception as error:
+            sys.stdout.write(error)
     else:
-        build_ulp(bpath, ppath, xpath, upath, tpath, ulp_files, board_options)
+        build_ulp(bpath, ppath, xpath, upath, tpath, ulp_files, board_options, True)
     sys.exit(0)
 
 
-def build_ulp(build_path, platform_path, xtensa_path, ulp_path, tool_path, ulp_sfiles, board_options):
+def build_ulp(build_path, platform_path, xtensa_path, ulp_path, tool_path, ulp_sfiles, board_options, has_s_file):
     console_string = 'ULP Assembly File(s) Detected: ' + ', '.join(ulp_sfiles) + '\r'
 
     cmds = gen_cmds(os.path.join(platform_path, 'tools'))
@@ -170,8 +172,8 @@ def build_ulp(build_path, platform_path, xtensa_path, ulp_path, tool_path, ulp_s
         error_string = cmd[0] + '\r' + err.decode('utf-8')
         sys.exit(error_string)
     else:
-        console_string += cmd[0] + '\r'
-
+        sys.stdout.write(cmd[0])
+        
     ## Add the generated binary to the list of binary files
     cmd = gen_binutils_objcopy_cmd(build_path, ulp_path, ulp_sfiles, board_options)
     proc = subprocess.Popen(cmd[1],stdout=subprocess.PIPE,stderr=subprocess.PIPE,shell=False)
@@ -191,7 +193,6 @@ def build_ulp(build_path, platform_path, xtensa_path, ulp_path, tool_path, ulp_s
         sys.exit(error_string)
     else:
         sys.stdout.write(cmd[0])
-
     return 0
 
 def gen_xtensa_preprocessor_cmd(build_path, compiler_path, file, board_options):
