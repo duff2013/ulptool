@@ -20,6 +20,7 @@
 import os
 import sys
 import glob
+import shutil
 import argparse
 import subprocess
 
@@ -86,21 +87,24 @@ def main(argv):
     ppath = args.p  # Plateform path
     upath = args.u  # ULP path
     xpath = args.x  # Xtensa path
-    tpath = args.t  #
+    tpath = args.t  # Tool path
 
     os.chdir(os.path.join(bpath, 'sketch'))
     ulp_files = glob.glob('*.s')
-
+    
     if not ulp_files:
         sys.stdout.write('No ULP Assembly File(s) Detected...\r')
         try:
             with open('ulp_main.ld',"w") as fld: pass
+            # Comment extra flag
+            update_platform_local(ppath, enable_extra_flag = False)
         except Exception as error:
             sys.stdout.write(error)
     else:
+        # Uncomment extra flag
+        update_platform_local(ppath, enable_extra_flag = True)
         build_ulp(bpath, ppath, xpath, upath, tpath, ulp_files, board_options, True)
     sys.exit(0)
-
 
 def build_ulp(build_path, platform_path, xtensa_path, ulp_path, tool_path, ulp_sfiles, board_options, has_s_file):
     console_string = 'ULP Assembly File(s) Detected: ' + ', '.join(ulp_sfiles) + '\r'
@@ -373,5 +377,43 @@ def gen_ulp_cmds(path):
     cmds['ULP_OBJCPY']    = os.path.join(path, 'esp32ulp-elf-objcopy')
     return cmds
 
+## Uncomment/Comment extra flag for compilation
+def update_platform_local(ppath, enable_extra_flag = True):
+    temp = []
+    ## Read and evalute the next action (overwrite or return)
+    with open(os.path.join(ppath, 'platform.local.txt'), "r") as pltf:
+        for line in pltf:
+            temp.append(line)
+
+    temp_write = temp
+
+    if 'compiler.c.elf.extra_flags' in ' '.join(temp):
+        for index_line in range(len(temp)):      
+            if 'compiler.c.elf.extra_flags' in temp[index_line]:
+                if (enable_extra_flag and not ('#' in temp[index_line])) or (not enable_extra_flag and ('#' in temp[index_line])):
+                    print('Quit')
+                    return
+                
+                elif enable_extra_flag and ('#' in temp[index_line]):       # Update to active ulp compilation
+                    print('Active ULP compilation')
+                    extra_flag = temp[index_line][temp[index_line].find('compiler.c.elf.extra_flags'):]
+                    temp_write.remove(temp[index_line])
+                    temp_write.insert(index_line, extra_flag)
+                    
+                elif not enable_extra_flag and not ('#' in temp[index_line]):   # Update to desactivate the ulp compilation
+                    print('Desactive ULP compilatiob')
+                    extra_flag = '## ' + temp[index_line][temp[index_line].find('compiler.c.elf.extra_flags'):]
+                    temp_write.remove(temp[index_line])
+                    temp_write.insert(index_line, extra_flag)
+                
+    else:
+        return "Unable to uptdate 'platform.local.txt'"
+
+    # Overwrite the file
+    with open(os.path.join(ppath, 'platform.local.txt'), "w") as pltf:
+        for line in temp_write:
+            pltf.write(line)
+    return
+        
 if __name__ == '__main__':
     main(sys.argv[1:])
