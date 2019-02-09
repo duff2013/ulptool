@@ -20,7 +20,7 @@
 import os
 import sys
 import glob
-import shutil
+# import shutil
 import argparse
 import subprocess
 
@@ -91,18 +91,20 @@ def main(argv):
 
     os.chdir(os.path.join(bpath, 'sketch'))
     ulp_files = glob.glob('*.s')
+
+    update_compilation_method(ppath)
     
     if not ulp_files:
         sys.stdout.write('No ULP Assembly File(s) Detected...\r')
         try:
             with open('ulp_main.ld',"w"): pass
             # Comment extra flag
-            update_platform_local(ppath, enable_extra_flag = False)
+            # update_platform_local(ppath, enable_extra_flag = False)
         except Exception as error:
             sys.stdout.write(error)
     else:
         # Uncomment extra flag
-        update_platform_local(ppath, enable_extra_flag = True)
+        # update_platform_local(ppath, enable_extra_flag = True)
         build_ulp(bpath, ppath, xpath, upath, tpath, ulp_files, board_options, True)
     sys.exit(0)
 
@@ -391,17 +393,17 @@ def update_platform_local(ppath, enable_extra_flag = True):
         for index_line in range(len(temp)):      
             if 'compiler.c.elf.extra_flags' in temp[index_line]:
                 if (enable_extra_flag and not ('#' in temp[index_line])) or (not enable_extra_flag and ('#' in temp[index_line])):
-                    sys.stdout.write('ULP compilation is already activated.' if enable_extra_flag else 'ULP compilation is already desactivated.')
+                    sys.stdout.write('ULP compilation is already activated.\n' if enable_extra_flag else 'ULP compilation is already desactivated.\n')
                     return
                 
                 elif enable_extra_flag and ('#' in temp[index_line]):       # Update to active ulp compilation
-                    error = 'Warning: Active ULP compilation, you have to recompile the code.'
+                    error = 'Active ULP compilation, you have to recompile the code.'
                     extra_flag = temp[index_line][temp[index_line].find('compiler.c.elf.extra_flags'):]
                     temp_write.remove(temp[index_line])
                     temp_write.insert(index_line, extra_flag)
                     
                 elif not enable_extra_flag and not ('#' in temp[index_line]):   # Update to desactivate the ulp compilation
-                    error = 'Warning: Desactive ULP compilation, you have to recompile the code.'
+                    error = 'Desactive ULP compilation, you have to recompile the code.'
                     extra_flag = '## ' + temp[index_line][temp[index_line].find('compiler.c.elf.extra_flags'):]
                     temp_write.remove(temp[index_line])
                     temp_write.insert(index_line, extra_flag)
@@ -415,6 +417,76 @@ def update_platform_local(ppath, enable_extra_flag = True):
             pltf.write(line)
     sys.exit(error)
     return
+
+def update_compilation_method(ppath):
+    ## Search variable in 'platform.txt'
+    temp_plt = []
+    with open(os.path.join(ppath, 'platform.txt'), "r") as pltf:
+        for line in pltf:
+            temp_plt.append(line)
+
+    for line in temp_plt:
+        if 'recipe.c.combine.pattern' in line:
+            recipe_c_combine_pattern = line
+
+    """
+    From:
+    ## Combine gc-sections, archives, and objects
+    recipe.c.combine.pattern="{compiler.path}{compiler.c.elf.cmd}" {compiler.c.elf.flags} {compiler.c.elf.extra_flags} -Wl,--start-group {object_files} "{archive_file_path}" {compiler.c.elf.libs} -Wl,--end-group -Wl,-EL -o "{build.path}/{build.project_name}.elf"
+
+    To:
+    ## Combine gc-sections, archives, and objects
+    recipe.c.combine.pattern=python "{tools.ulptool.path}recipe_c_combine_pattern.py" -b "{build.path}" -c "{compiler.path}{compiler.c.elf.cmd}" -f {compiler.c.elf.flags} -xf {compiler.c.elf.extra_flags} -sf -Wl,--start-group {object_files} "{archive_file_path}" {compiler.c.elf.libs} -Wl,--end-group -Wl,-EL -o "{build.path}/{build.project_name}.elf"
+    """
+    
+    ## Build variable
+    var = 'recipe.c.combine.pattern'
+    script = '=python "{tools.ulptool.path}recipe_c_combine_pattern.py" -b "{build.path}" -c '
+    compiler_path = recipe_c_combine_pattern[recipe_c_combine_pattern.find('=')+1:]
+    compiler_path = compiler_path[:compiler_path.find('" ')+1] + ' -f '  
+    compiler_flags = '{compiler.c.elf.flags}' if '{compiler.c.elf.flags}' in recipe_c_combine_pattern else ''
+    compiler_extra_flags = '{compiler.c.elf.extra_flags}' if '{compiler.c.elf.extra_flags}' in recipe_c_combine_pattern else ''
+    compiler_sufix_flags = recipe_c_combine_pattern[recipe_c_combine_pattern.find('{compiler.c.elf.extra_flags}')+len('{compiler.c.elf.extra_flags}')+1:] if recipe_c_combine_pattern.find('{compiler.c.elf.extra_flags}') != -1 else ''
+    cmd = var + script + compiler_path + compiler_flags + ' -xf ' + compiler_extra_flags + ' -sf ' + compiler_sufix_flags
+
+    ## Check 'platform.local.txt' file for update
+    temp_plt_lc = []
+    with open(os.path.join(ppath, 'platform.local.txt'), "r") as pltf:
+        for line in pltf:
+            temp_plt_lc.append(line)
+    
+    update_needed = []
+    up_to_date_flag = False
+    for line in temp_plt_lc:
+        if cmd in line:
+            sys.stdout.write("'platform.local.txt' is up to date.\n")
+            up_to_date_flag = True
+        elif var in line:
+            sys.stdout.write("'platform.local.txt' need to be updated (from old version).\n")
+            update_needed.append(line)
+    
+    for i in update_needed:
+        temp_plt_lc.remove(i)
+
+    ## Update if needed
+    if up_to_date_flag:
+        if len(update_needed):
+            sys.stdout.write("'platform.local.txt' need to be cleaned.\nStarts cleaning.\n")
+            with open(os.path.join(ppath, 'platform.local.txt'), "w") as pltf:
+                for line in temp_plt_lc:
+                    pltf.write(line)
+            sys.exit('\nYou need to recompile your script (this should happend only once).\n')
+        return
         
+    sys.stdout.write("'platform.local.txt' need to be updated.\nStarts update.\n")
+    temp_plt_lc.append('\n## Combine gc-sections, archives, and objects with python\n')
+    temp_plt_lc.append(cmd)
+
+    with open(os.path.join(ppath, 'platform.local.txt'), "w") as pltf:
+        for line in temp_plt_lc:
+            pltf.write(line)
+    
+    sys.exit('\nYou need to recompile your script (this should happend only once).\n')
+    
 if __name__ == '__main__':
     main(sys.argv[1:])
