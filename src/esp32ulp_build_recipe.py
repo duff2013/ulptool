@@ -95,7 +95,7 @@ def main(argv):
     if not ulp_files:
         sys.stdout.write('No ULP Assembly File(s) Detected...\r')
         try:
-            with open('ulp_main.ld',"w") as fld: pass
+            with open('ulp_main.ld',"w"): pass
             # Comment extra flag
             update_platform_local(ppath, enable_extra_flag = False)
         except Exception as error:
@@ -107,13 +107,13 @@ def main(argv):
     sys.exit(0)
 
 def build_ulp(build_path, platform_path, xtensa_path, ulp_path, tool_path, ulp_sfiles, board_options, has_s_file):
-    console_string = 'ULP Assembly File(s) Detected: ' + ', '.join(ulp_sfiles) + '\r'
+    sys.stdout.write('ULP Assembly File(s) Detected: ' + ', '.join(ulp_sfiles) + '\r')
 
-    cmds = gen_cmds(os.path.join(platform_path, 'tools'))
+    # cmds = gen_cmds(os.path.join(platform_path, 'tools'))
 
     for file in ulp_sfiles:
         file = file.split('.')
-        file_names = gen_file_names(file[0])
+        # file_names = gen_file_names(file[0])
 
         ## Run each assembly file (foo.S) through C preprocessor
         cmd = gen_xtensa_preprocessor_cmd(build_path, xtensa_path, file, board_options)
@@ -391,17 +391,17 @@ def update_platform_local(ppath, enable_extra_flag = True):
         for index_line in range(len(temp)):      
             if 'compiler.c.elf.extra_flags' in temp[index_line]:
                 if (enable_extra_flag and not ('#' in temp[index_line])) or (not enable_extra_flag and ('#' in temp[index_line])):
-                    print('Quit')
+                    sys.stdout.write('ULP compilation is already activated.' if enable_extra_flag else 'ULP compilation is already desactivated.')
                     return
                 
                 elif enable_extra_flag and ('#' in temp[index_line]):       # Update to active ulp compilation
-                    print('Active ULP compilation')
+                    error = 'Warning: Active ULP compilation, you have to recompile the code.'
                     extra_flag = temp[index_line][temp[index_line].find('compiler.c.elf.extra_flags'):]
                     temp_write.remove(temp[index_line])
                     temp_write.insert(index_line, extra_flag)
                     
                 elif not enable_extra_flag and not ('#' in temp[index_line]):   # Update to desactivate the ulp compilation
-                    print('Desactive ULP compilatiob')
+                    error = 'Warning: Desactive ULP compilation, you have to recompile the code.'
                     extra_flag = '## ' + temp[index_line][temp[index_line].find('compiler.c.elf.extra_flags'):]
                     temp_write.remove(temp[index_line])
                     temp_write.insert(index_line, extra_flag)
@@ -413,6 +413,7 @@ def update_platform_local(ppath, enable_extra_flag = True):
     with open(os.path.join(ppath, 'platform.local.txt'), "w") as pltf:
         for line in temp_write:
             pltf.write(line)
+    sys.exit(error)
     return
         
 if __name__ == '__main__':
