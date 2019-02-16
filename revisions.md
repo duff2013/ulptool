@@ -1,3 +1,9 @@
+><b>Updated (2/15/19 v2.3.0)</b><br>
+* Fixed flash memory allocation.<br>
+* Add custom binary load function("ulptool_load_binary").<br>
+* Use python to run the esp32.ld thru the c preprocessor creating an updated esp32_out.ld<br>
+* Print ulp memory usage in stdout now.<br>
+
 ><b>Updated (2/8/19 v2.2.0)</b><br>
 * Fixed compiling of non ulp projects.<br>
 * Changed example file name from README.ino to ulp_README.ino.<br>

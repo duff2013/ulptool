@@ -25,6 +25,7 @@
 #include "esp32/ulp.h"
 #include "sdkconfig.h"
 #include "ulp_main.h"
+#include "ulptool.h"
 
 extern const uint8_t ulp_main_bin_start[] asm("_binary_ulp_main_bin_start");
 extern const uint8_t ulp_main_bin_end[]   asm("_binary_ulp_main_bin_end");
@@ -72,7 +73,7 @@ void loop() {
 
 static void init_ulp_program()
 {
-  esp_err_t err = ulp_load_binary(0, ulp_main_bin_start,
+  esp_err_t err = ulptool_load_binary(0, ulp_main_bin_start,
                                   (ulp_main_bin_end - ulp_main_bin_start) / sizeof(uint32_t));
   ESP_ERROR_CHECK(err);
 

@@ -11,6 +11,7 @@
 #include "ulp_main.h"
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
+#include "ulptool.h"
 
 #define ERROR_INDICATE_LED      16
 #define RELAY_CONTROLS_PIN      4
@@ -70,7 +71,7 @@ void loop() {
 
 static void init_ulp_program()
 {
-  esp_err_t err = ulp_load_binary(0, ulp_main_bin_start,
+  esp_err_t err = ulptool_load_binary(0, ulp_main_bin_start,
                                   (ulp_main_bin_end - ulp_main_bin_start) / sizeof(uint32_t));
   ESP_ERROR_CHECK(err);
 

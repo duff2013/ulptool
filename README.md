@@ -1,4 +1,4 @@
-ulptool v2.2.0
+ulptool v2.3.0
 ==================
 This guide explains how to setup Arduino to use ULP coprocessor assembly files for your esp32 projects. This guide assumes you installed the esp32 core with the preferred method of the board manager.
 
@@ -6,7 +6,7 @@ Typically in Arduino you can compile assembly files using the '.S' extension. Us
 
 Manual Setup Steps:
 ============
-1. Download the latest release of this repository and unpack-> 'ulptool'. https://github.com/duff2013/ulptool/releases/latest
+1. Download the latest release of this repository and unpack-> https://github.com/duff2013/ulptool/releases/latest
 delete the release version number so the folder is just called 'ulptool'
 
 2. Download and unpack the latest pre-compiled binutils-esp32ulp toolchain for Mac/Linux/Windows: https://github.com/espressif/binutils-esp32ulp/releases/latest
@@ -33,9 +33,13 @@ Example:
 ========
 Open a blank Arduino sketch and copy and paste the code below into the that sketch.
 ```
-#include "esp32/ulp.h"
+#include "esp32/ulp.h"// Must have this!!!
+
 // include ulp header you will create
-#include "ulp_main.h"
+#include "ulp_main.h"// Must have this!!!
+
+// Custom binary loader
+#include "ulptool.h"// Must have this!!!
 
 // Unlike the esp-idf always use these binary blob names
 extern const uint8_t ulp_main_bin_start[] asm("_binary_ulp_main_bin_start");
@@ -59,7 +63,8 @@ static void init_run_ulp(uint32_t usec) {
     // initialize ulp variable
     ulp_count = 0;
     ulp_set_wakeup_period(0, usec);
-    esp_err_t err = ulp_load_binary(0, ulp_main_bin_start, (ulp_main_bin_end - ulp_main_bin_start) / sizeof(uint32_t));
+    // use this binary loader instead
+    esp_err_t err = ulptool_load_binary(0, ulp_main_bin_start, (ulp_main_bin_end - ulp_main_bin_start) / sizeof(uint32_t));
     // ulp coprocessor will run on its own now
     err = ulp_run((&ulp_entry - RTC_SLOW_MEM) / sizeof(uint32_t));
 }
@@ -108,6 +113,6 @@ Limitations:
 ============
 While almost a complete solution to programing the ULP coprocessor in assembly, there are currently a few limitations. Once I fix these, I'll remove them from this list.
 
-1. Not tested with Windows or Linux yet.
+1. Not tested with Linux yet.
 2. Errors can be non-informative.
-3. Changing the ulp memory size is not working fully yet.
+3. Have to use the custom binary loader function now. (ulptool_load_binary)
