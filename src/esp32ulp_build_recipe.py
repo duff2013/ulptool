@@ -89,7 +89,7 @@ def main(argv):
     PATHS['ulptool']   = args.t
     PATHS['ucompiler'] = args.u
     PATHS['xcompiler'] = args.x
-    
+
     os.chdir(os.path.join(PATHS['build'], 'sketch'))
 
     gen_assembly(PATHS)
@@ -322,7 +322,12 @@ def gen_lcc_cmd(PATHS, file):
     soc_path     = os.path.join(PATHS['core'], 'tools', 'sdk', 'include', 'soc', 'soc')
     include_path = os.path.join(PATHS['core'], 'tools', 'sdk', 'include', 'soc')
     header_path  = os.path.join(PATHS['ulptool'], 'ulpcc', 'include')
-    lcc_path     = os.path.join(PATHS['ulptool'], 'ulpcc', 'bin', 'darwin')
+    if platform.system() == 'Darwin':
+        lcc_path = os.path.join(PATHS['ulptool'], 'ulpcc', 'bin', 'darwin')
+    elif platform.system() == 'Linux':
+        lcc_path = os.path.join(PATHS['ulptool'], 'ulpcc', 'bin', 'linux')
+    elif platform.system() == 'Windows':
+        sys.exit("ulpcc is not supported on Windows")
     LCC = []
     LCC.append(lcc_path + '/lcc')
     LCC.append('-I' + soc_path)
