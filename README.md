@@ -93,7 +93,7 @@ entry:
     halt
 ```
 
-Create a new tab named <b>ulp_main.h</b>. This header allows your sketch to see global variables whose memory is allocated your ulp assembly file. This memory is in the SLOW RTC section. Copy the code below into that header file. As with the esp-idf you have to add 'ulp_' to the front of the variable name. Unlike esp-idf the name of this header is always this name.
+Create a new tab named <b>ulp_main.h</b>. This header allows your sketch to see global variables whose memory is allocated in your ulp assembly file. This memory is in the SLOW RTC section. Copy the code below into that header file. As with the esp-idf you have to add 'ulp_' to the front of the variable name. Unlike esp-idf the name of this header is always this name.
 ```
 /*
     Put your ULP globals here you want visibility
@@ -167,7 +167,7 @@ void entry() {
 #endif // do not add code after here
 ```
 
-Create a new tab named <b>ulp_main.h</b>. This header allows your sketch to see global variables whose memory is allocated your ulp c file. This memory is in the SLOW RTC section. Copy the code below into that header file. As with the esp-idf you have to add 'ulp_' to the front of the variable name. Unlike esp-idf the name of this header is always this name.
+Create a new tab named <b>ulp_main.h</b>. This header allows your sketch to see global variables whose memory is allocated in your ulp c file. This memory is in the SLOW RTC section. Copy the code below into that header file. As with the esp-idf you have to add 'ulp_' to the front of the variable name. Unlike esp-idf the name of this header is always this name.
 ```
 /*
     Put your ULP globals here you want visibility
