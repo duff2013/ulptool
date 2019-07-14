@@ -1,3 +1,7 @@
+><b>Updated (7/14/19 v2.4.0)</b><br>
+* Added support for ulpcc c compiler :)<br>
+* Cleaned up code.<br>
+
 ><b>Updated (2/15/19 v2.3.0)</b><br>
 * Fixed flash memory allocation.<br>
 * Add custom binary load function("ulptool_load_binary").<br>
