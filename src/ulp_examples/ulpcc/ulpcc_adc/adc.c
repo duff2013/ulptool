@@ -1,9 +1,4 @@
-/*
- * do not add code above here all 
- * ulp c code must be between this 
- * ifdef.
- */
-#ifdef _ULPCC_
+#ifdef _ULPCC_ // do not add code above this line
 // must include ulpcc helper functions
 #include <ulp_c.h>
 #include "common.h"
@@ -15,18 +10,20 @@
 unsigned threshold;
 /*
  * esp32 main processor can reach this variable.
- * It is used to signal that a result is ready.
+ * It is used to signal that a result is ready
+ * and when the main processor read the value.
  */
 unsigned mutex = 0;
 
 // # of samples
 unsigned sample_counter = 0;
-/* 
- * ulp registers are only 32 bits but
- * can only hold 16 bits of data so we
- * use sum_hi and sum_lo to hold 32 bits 
+/*
+ * ulp registers are 32 bits but can
+ * only hold 16 bits of data. We use
+ * sum_hi (upper 16-bits) and sum_lo
+ * (lower 16-bits) to hold 32 bits
  * of data. The averaged data is computed
- * from sum_hi and sum_lo.
+ * from this proto 32-bit number.
  */
 unsigned sum_lo = 0;
 unsigned sum_hi = 0;
@@ -36,7 +33,7 @@ void entry() {
   unsigned tmp = 0, i = 0;
   sum_hi = 0;
   sum_lo = 0;
-  // # of adc samples set by the adc_oversampling_factor in common.h
+  // avg routine
   for (i = 0; i < adc_oversampling_factor; i++) {
     // get adc reading
     tmp = adc(0, adc_channel + 1);

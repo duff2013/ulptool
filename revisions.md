@@ -1,3 +1,8 @@
+><b>Updated (8/20/19 v2.4.1)</b><br>
+* Added lcc copyright file.<br>
+* Fix grammar and spelling of README.md.<br>
+* Fix lcc examples.<br>
+
 ><b>Updated (7/14/19 v2.4.0)</b><br>
 * Added support for ulpcc c compiler :)<br>
 * Cleaned up code.<br>

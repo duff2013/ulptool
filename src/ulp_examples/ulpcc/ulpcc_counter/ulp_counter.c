@@ -1,9 +1,4 @@
-/*
- * do not add code above here all 
- * ulp c code must be between this 
- * ifdef.
- */
-#ifdef _ULPCC_
+#ifdef _ULPCC_ // do not add code above this line
 // must include ulpcc helper functions
 #include <ulp_c.h>
 

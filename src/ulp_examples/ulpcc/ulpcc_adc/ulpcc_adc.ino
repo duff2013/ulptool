@@ -31,7 +31,6 @@ void loop() {
                   adc_oversampling_factor,
                   ulp_adc_avg_result & 0xffff
                  );
-    //Serial.printf("%i\n", ulp_result & 0xffff);
     Serial.flush();
     // tell ulp we are done reading result
     ulp_mutex = false;
@@ -46,8 +45,8 @@ static void init_run_ulp(uint32_t usec) {
   //rtc_gpio_hold_en(GPIO_NUM_15);
   ulp_set_wakeup_period(0, usec);
   esp_err_t err = ulptool_load_binary(0, ulp_main_bin_start, (ulp_main_bin_end - ulp_main_bin_start) / sizeof(uint32_t));
-  // all shared ulp variables have to inialize after ulptool_load_binary for the ulp to see it.
-  // Set the high threshold you want the ulp to trigger a main processor wakeup
+  // all shared ulp variables have to be intialized after ulptool_load_binary for the ulp to see it.
+  // Set the high threshold reading you want the ulp to trigger a main processor wakeup.
   ulp_threshold = 0x20;
   err = ulp_run((&ulp_entry - RTC_SLOW_MEM) / sizeof(uint32_t));
   if (err) Serial.println("Error Starting ULP Coprocessor");
