@@ -1,4 +1,4 @@
-ulptool v2.4.1
+ulptool v2.4.2
 ==================
 Now Arduino can program the ULP coprocessor for your esp32 projects. The guide below assumes you installed the esp32 core with the preferred method using the board manager.
 
