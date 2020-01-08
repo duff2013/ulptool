@@ -1,3 +1,6 @@
+><b>Updated (1/8/20 v2.4.2)</b><br>
+* Fix readme.md ulpcc example.<br>
+
 ><b>Updated (8/20/19 v2.4.1)</b><br>
 * Added lcc copyright file.<br>
 * Fix grammar and spelling of README.md.<br>

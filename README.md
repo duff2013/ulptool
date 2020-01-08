@@ -149,12 +149,7 @@ static void init_run_ulp(uint32_t usec) {
 
 Create a new tab named <b>ulp_counter.c</b>, take notice of the ```#ifdef _ULPCC_```, code between these will be compiled by the ulp c compiler. Do not place any code outside of the ```#ifdef _ULPCC_``` or your sketch will fail to build. For further information about the limitations see Jason Fullers github site which is developed for the esp-idf not Arduino.
 ```
-/*
- * do not add code above here all
- * ulp c code must be between this
- * ifdef.
- */
-#ifdef _ULPCC_
+#ifdef _ULPCC_ // Do not add anything above this def
 // must include ulpcc helper functions
 #include <ulp_c.h>
 
@@ -166,7 +161,7 @@ void entry() {
   // increment counter
   counter++;
 }
-#endif // do not add code after here
+#endif // do not add anything after here
 ```
 
 Create a new tab named <b>ulp_main.h</b>. This header allows your sketch to see global variables whose memory is allocated in your ulp assembly file. This memory is from the SLOW RTC section. Copy the code below into the header file. As with the esp-idf you have to add 'ulp_' to the front of the variable name. Unlike esp-idf the name of this header is always **ulp_main.h**.
@@ -193,6 +188,6 @@ Limitations:
 ============
 While almost a complete solution to programing the ULP coprocessor in assembly, there are currently a few limitations. Once I fix these, I'll remove them from this list.
 
-1. ulpcc is still experimental.
+1. ulpcc is still experimental, Mac and Linux only so far.
 2. Errors can be non-informative.
 3. Have to use the custom binary loader function now. (ulptool_load_binary)
