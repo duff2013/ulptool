@@ -297,8 +297,8 @@ def gen_assembly(PATHS):
             with open(file, "rb") as f:
                 top = f.readline().strip()
                 bottom = f.readlines()[-1].strip()
-                if top == "#ifdef _ULPCC_":
-                    if bottom == "#endif":
+                if top.startswith("#ifdef _ULPCC_"):
+                    if bottom.startswith("#endif"):
                         ulpcc_files.append(file)
 
     except Exception as e:
