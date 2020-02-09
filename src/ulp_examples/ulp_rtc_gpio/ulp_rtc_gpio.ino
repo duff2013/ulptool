@@ -79,7 +79,7 @@ void setup() {
 
   Serial.printf("Entering deep sleep\n\n");
   /* Start the ULP program */
-  ESP_ERROR_CHECK( ulp_run((&ulp_entry - RTC_SLOW_MEM) / sizeof(uint32_t)));
+  ESP_ERROR_CHECK( ulp_run(&ulp_entry - RTC_SLOW_MEM) );
   ESP_ERROR_CHECK( esp_sleep_enable_ulp_wakeup() );
   rtc_gpio_set_level(cpu_up_num, 0);
   esp_deep_sleep_start();
