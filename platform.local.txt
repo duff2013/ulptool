@@ -8,7 +8,7 @@ tools.ulptool.path={runtime.tools.ulptool.path}/
 tools.ulptool.cmd=esp32ulp_build_recipe.py
 
 ## ulp build tool
-compiler.s.cmd=python "{tools.ulptool.path}{tools.ulptool.cmd}"
+compiler.s.cmd=python2 "{tools.ulptool.path}{tools.ulptool.cmd}"
 
 ## ulp_main.ld file address
 compiler.c.elf.extra_flags="-L{build.path}/sketch/" -T ulp_main.ld "{build.path}/sketch/ulp_main.bin.bin.o"
