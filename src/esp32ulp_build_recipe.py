@@ -70,6 +70,7 @@ EXTRA_FLAGS =\
 
 
 def main(argv):
+    # Parse arguments (i.e.: -b in python script.py -b)
     parser = argparse.ArgumentParser()
     parser.add_argument('-b', action='store')
     parser.add_argument('-p', action='store')
@@ -79,10 +80,12 @@ def main(argv):
     parser.add_argument('-I', action='append')
     args, options = parser.parse_known_args()
 
+    ## Begin to append the preprocessor flags in a list
     for item in args.I:
         CPREPROCESSOR_FLAGS.append('-I')
         CPREPROCESSOR_FLAGS.append(item)
 
+    ## Append the board options in a list
     board_options = []
     for item in options:
         if item.startswith('--'):
@@ -101,11 +104,22 @@ def main(argv):
 
     ulp_files = glob.glob('*.s')
 
+    update_compilation_method(ppath)
+    
     if not ulp_files:
         sys.stdout.write('No ULP Assembly File(s) Detected...\r\n')
+        # try:
+        #     with open('ulp_main.ld',"w"): pass
+        #     # Comment extra flag
+        #     # update_platform_local(ppath, enable_extra_flag = False)
+        # except Exception as error:
+        #     sys.stdout.write(error)
+
         # <-- Not used
         # with open('tmp.s', "w") as ulp:
         #     pass
+        open('tmp.s', "w")
+
         ulp_files.append('tmp.s')
         build_ulp(PATHS, ulp_files, board_options, False)
         os.remove('tmp.s')
@@ -143,8 +157,11 @@ def build_ulp(PATHS, ulp_sfiles, board_options, has_s_file):
         if err:
             error_string = cmd[0] + '\r\n' + err
             sys.exit(error_string)
+            # error_string = cmd[0] + '\r' + err.decode('utf-8')
+            # sys.exit(error_string)
         else:
             console_string += cmd[0] + '\r\n'
+            # sys.stdout.write(cmd[0])
 
         # Run preprocessed assembly sources through assembler
         cmd = gen_binutils_as_cmd(PATHS, _file)
@@ -158,8 +175,11 @@ def build_ulp(PATHS, ulp_sfiles, board_options, has_s_file):
         if err:
             error_string = cmd[0] + '\r\n' + err
             sys.exit(error_string)
+            # error_string = cmd[0] + '\r' + err.decode('utf-8')
+            # sys.exit(error_string)
         else:
             console_string += cmd[0] + '\r\n'
+            # sys.stdout.write(cmd[0])
 
     # Run linker script template through C preprocessor
     cmd = gen_xtensa_ld_cmd(PATHS, ulp_sfiles, board_options)
@@ -172,10 +192,12 @@ def build_ulp(PATHS, ulp_sfiles, board_options, has_s_file):
     (out, err) = proc.communicate()
     if err:
         error_string = cmd[0] + '\r\n' + err
+        # error_string = cmd[0] + '\r\n' + err.decode('utf-8')
         sys.exit(error_string)
 
     else:
         console_string += cmd[0] + '\r\n'
+        # sys.stdout.write(cmd[0])
 
     # Link object files into an output ELF file
     cmd = gen_binutils_ld_cmd(PATHS, ulp_sfiles)
@@ -188,10 +210,12 @@ def build_ulp(PATHS, ulp_sfiles, board_options, has_s_file):
     (out, err) = proc.communicate()
     if err:
         error_string = cmd[0] + '\r\n' + err
+        # error_string = cmd[0] + '\r\n' + err.decode('utf-8')
         sys.exit(error_string)
 
     else:
         console_string += cmd[0] + '\r\n'
+        # sys.stdout.write(cmd[0])
 
     # Get section memory sizes
     cmd = gen_binutils_size_cmd(PATHS)
@@ -205,9 +229,14 @@ def build_ulp(PATHS, ulp_sfiles, board_options, has_s_file):
 
     if err:
         error_string = cmd[0] + '\r\n' + err
+        # error_string = cmd[0] + '\r\n' + err.decode('utf-8')
         sys.exit(error_string)
 
     else:
+        # file_names_constant = gen_file_names_constant()
+        # with open(file_names_constant['sym'],"w") as fsym:
+        #     fsym.write(out.decode('utf-8'))
+        # sys.stdout.write(cmd[0])
         try:
             file_path = os.path.join(
                 PATHS['core'],
@@ -325,10 +354,12 @@ def build_ulp(PATHS, ulp_sfiles, board_options, has_s_file):
     (out, err) = proc.communicate()
     if err:
         error_string = cmd[0] + '\r\n' + err
+        # error_string = cmd[0] + '\r\n' + err.decode('utf-8')
         sys.exit(error_string)
 
     else:
         console_string += cmd[0] + '\r\n'
+        # sys.stdout.write(cmd[0])
 
     # Add the generated binary to the list of binary files
     cmd = gen_binutils_objcopy_cmd(PATHS)
@@ -341,10 +372,12 @@ def build_ulp(PATHS, ulp_sfiles, board_options, has_s_file):
     (out, err) = proc.communicate()
     if err:
         error_string = cmd[0] + '\r\n' + err
+        # error_string = cmd[0] + '\r\n' + err.decode('utf-8')
         sys.exit(error_string)
 
     else:
         console_string += cmd[0] + '\r\n'
+        # sys.stdout.write(cmd[0])
 
     # Add the generated binary to the list of binary files
     cmd = gen_xtensa_objcopy_cmd(PATHS)
@@ -357,10 +390,12 @@ def build_ulp(PATHS, ulp_sfiles, board_options, has_s_file):
     (out, err) = proc.communicate()
     if err:
         error_string = cmd[0] + '\r\n' + err
+        # error_string = cmd[0] + '\r\n' + err.decode('utf-8')
         sys.exit(error_string)
 
     else:
         console_string += cmd[0] + '\r\n'
+        # sys.stdout.write(cmd[0])
 
     # Check if sdkconfig.h md5 hash has changed indicating the file has changed
     sdk_hash = md5(os.path.join(
@@ -697,5 +732,114 @@ def md5(fname):
     return hash_md5.hexdigest()
 
 
+## Uncomment/Comment extra flag for compilation
+def update_platform_local(ppath, enable_extra_flag = True):
+    temp = []
+    ## Read and evalute the next action (overwrite or return)
+    with open(os.path.join(ppath, 'platform.local.txt'), "r") as pltf:
+        for line in pltf:
+            temp.append(line)
+
+    temp_write = temp
+
+    if 'compiler.c.elf.extra_flags' in ' '.join(temp):
+        for index_line in range(len(temp)):      
+            if 'compiler.c.elf.extra_flags' in temp[index_line]:
+                if (enable_extra_flag and not ('#' in temp[index_line])) or (not enable_extra_flag and ('#' in temp[index_line])):
+                    sys.stdout.write('ULP compilation is already activated.\n' if enable_extra_flag else 'ULP compilation is already desactivated.\n')
+                    return
+                
+                elif enable_extra_flag and ('#' in temp[index_line]):       # Update to active ulp compilation
+                    error = 'Active ULP compilation, you have to recompile the code.'
+                    extra_flag = temp[index_line][temp[index_line].find('compiler.c.elf.extra_flags'):]
+                    temp_write.remove(temp[index_line])
+                    temp_write.insert(index_line, extra_flag)
+                    
+                elif not enable_extra_flag and not ('#' in temp[index_line]):   # Update to desactivate the ulp compilation
+                    error = 'Desactive ULP compilation, you have to recompile the code.'
+                    extra_flag = '## ' + temp[index_line][temp[index_line].find('compiler.c.elf.extra_flags'):]
+                    temp_write.remove(temp[index_line])
+                    temp_write.insert(index_line, extra_flag)
+                
+    else:
+        return "Unable to uptdate 'platform.local.txt'"
+
+    # Overwrite the file
+    with open(os.path.join(ppath, 'platform.local.txt'), "w") as pltf:
+        for line in temp_write:
+            pltf.write(line)
+    sys.exit(error)
+    return
+
+def update_compilation_method(ppath):
+    ## Search variable in 'platform.txt'
+    temp_plt = []
+    with open(os.path.join(ppath, 'platform.txt'), "r") as pltf:
+        for line in pltf:
+            temp_plt.append(line)
+
+    for line in temp_plt:
+        if 'recipe.c.combine.pattern' in line:
+            recipe_c_combine_pattern = line
+
+    """
+    From:
+    ## Combine gc-sections, archives, and objects
+    recipe.c.combine.pattern="{compiler.path}{compiler.c.elf.cmd}" {compiler.c.elf.flags} {compiler.c.elf.extra_flags} -Wl,--start-group {object_files} "{archive_file_path}" {compiler.c.elf.libs} -Wl,--end-group -Wl,-EL -o "{build.path}/{build.project_name}.elf"
+
+    To:
+    ## Combine gc-sections, archives, and objects
+    recipe.c.combine.pattern=python "{tools.ulptool.path}recipe_c_combine_pattern.py" -b "{build.path}" -c "{compiler.path}{compiler.c.elf.cmd}" -f {compiler.c.elf.flags} -xf {compiler.c.elf.extra_flags} -sf -Wl,--start-group {object_files} "{archive_file_path}" {compiler.c.elf.libs} -Wl,--end-group -Wl,-EL -o "{build.path}/{build.project_name}.elf"
+    """
+    
+    ## Build variable
+    var = 'recipe.c.combine.pattern'
+    script = '=python "{tools.ulptool.path}recipe_c_combine_pattern.py" -b "{build.path}" -c '
+    compiler_path = recipe_c_combine_pattern[recipe_c_combine_pattern.find('=')+1:]
+    compiler_path = compiler_path[:compiler_path.find('" ')+1] + ' -f '  
+    compiler_flags = '{compiler.c.elf.flags}' if '{compiler.c.elf.flags}' in recipe_c_combine_pattern else ''
+    compiler_extra_flags = '{compiler.c.elf.extra_flags}' if '{compiler.c.elf.extra_flags}' in recipe_c_combine_pattern else ''
+    compiler_sufix_flags = recipe_c_combine_pattern[recipe_c_combine_pattern.find('{compiler.c.elf.extra_flags}')+len('{compiler.c.elf.extra_flags}')+1:] if recipe_c_combine_pattern.find('{compiler.c.elf.extra_flags}') != -1 else ''
+    cmd = var + script + compiler_path + compiler_flags + ' -xf ' + compiler_extra_flags + ' -sf ' + compiler_sufix_flags
+
+    ## Check 'platform.local.txt' file for update
+    temp_plt_lc = []
+    with open(os.path.join(ppath, 'platform.local.txt'), "r") as pltf:
+        for line in pltf:
+            temp_plt_lc.append(line)
+    
+    update_needed = []
+    up_to_date_flag = False
+    for line in temp_plt_lc:
+        if cmd in line:
+            sys.stdout.write("'platform.local.txt' is up to date.\n")
+            up_to_date_flag = True
+        elif var in line:
+            sys.stdout.write("'platform.local.txt' need to be updated (from old version).\n")
+            update_needed.append(line)
+    
+    for i in update_needed:
+        temp_plt_lc.remove(i)
+
+    ## Update if needed
+    if up_to_date_flag:
+        if len(update_needed):
+            sys.stdout.write("'platform.local.txt' need to be cleaned.\nStarts cleaning.\n")
+            with open(os.path.join(ppath, 'platform.local.txt'), "w") as pltf:
+                for line in temp_plt_lc:
+                    pltf.write(line)
+            sys.exit('\nYou need to recompile your script (this should happend only once).\n')
+        return
+        
+    sys.stdout.write("'platform.local.txt' need to be updated.\nStarts update.\n")
+    temp_plt_lc.append('\n## Combine gc-sections, archives, and objects with python\n')
+    temp_plt_lc.append(cmd)
+
+    with open(os.path.join(ppath, 'platform.local.txt'), "w") as pltf:
+        for line in temp_plt_lc:
+            pltf.write(line)
+    
+    sys.exit('\nYou need to recompile your script (this should happend only once).\n')
+    
 if __name__ == '__main__':
     main(sys.argv[1:])

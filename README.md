@@ -9,6 +9,10 @@ Examples can be found in the `ulp_examples/ulpcc` folder.
 
 Note: `platform.local.txt` version does not follow `ulptool` version.
 
+## Installer (*setup.py*)
+
+Run *setup.py*, it will install the tools from this repository and binutils. It is possible to run the setup offline if you launch it from the extrated archive of this directory and if you download the correct binutils tool for your OS and put it in the same directory (extracted or as an archive) as the script (*setup.py*).
+
 ## Manual Setup Steps
 
 1. Download the latest release of this repository and unpack: [https://github.com/duff2013/ulptool/releases/latest](https://github.com/duff2013/ulptool/releases/latest)
