@@ -2,7 +2,7 @@
 
 Now Arduino can program the ULP co-processor for your esp32 projects. The guide below assumes you installed the esp32 core with the preferred method using the board manager.
 
-Typically in Arduino you can compile assembly files using the `.S` extension. Using the ESP32 Arduino core framework these files would correspond to the Xtensa processors whose toolchain is incompatible with the ULP coprocessor. Luckily, Arduino provides a fairly easy series of recipes for building the ULP assembly files by using the `.s` extension which Arduino will let you create. Take note, the extension is a lower case **s**. In tring to keep the ulp build process the same as the esp-idf framework only a few small modifications are needed to the esp32 Arduino installation.
+Typically in Arduino you can compile assembly files using the `.S` extension. Using the ESP32 Arduino core framework these files would correspond to the Xtensa processors whose toolchain is incompatible with the ULP coprocessor. Luckily, Arduino provides a fairly easy series of recipes for building the ULP assembly files by using the `.s` extension which Arduino will let you create. Take note, the extension is a lower case **s**. In trying to keep the ulp build process the same as the esp-idf framework only a few small modifications are needed to the esp32 Arduino installation.
 
 A new experimental `c` compiler (`lcc`) for the `ulp` implemented by Jason Fuller is included now. Currently only Mac and Linux have been built but hopefully I'll have Windows soon:) There are many limitations and those can found at his GitHub page here: [https://github.com/jasonful/lcc](https://github.com/jasonful/lcc)
 Examples can be found in the `ulp_examples/ulpcc` folder.
@@ -36,13 +36,13 @@ That's it, you now have all the files in place, lets look at very simple example
 Open a blank Arduino sketch and copy and paste the code below into that sketch:
 
 ```c++
-#include "esp32/ulp.h"// Must have this!!!
+#include "esp32/ulp.h" // Must have this!!!
 
 // include ulp header you will create
-#include "ulp_main.h"// Must have this!!!
+#include "ulp_main.h" // Must have this!!!
 
 // Custom binary loader
-#include "ulptool.h"// Must have this!!!
+#include "ulptool.h" // Must have this!!!
 
 // Unlike the esp-idf always use these binary blob names
 extern const uint8_t ulp_main_bin_start[] asm("_binary_ulp_main_bin_start");
@@ -50,17 +50,20 @@ extern const uint8_t ulp_main_bin_end[]   asm("_binary_ulp_main_bin_end");
 
 static void init_run_ulp(uint32_t usec);
 
+
 void setup() {
     Serial.begin(115200);
     delay(1000);
-    init_run_ulp(100 * 1000); // 100 msec
+    init_run_ulp(100 * 1000); // 100 ms
 }
+
 
 void loop() {
     // ulp variables data is the lower 16 bits
     Serial.printf("ulp count: %u\n", ulp_count & 0xFFFF);
     delay(100);
 }
+
 
 static void init_run_ulp(uint32_t usec) {
     // initialize ulp variable
