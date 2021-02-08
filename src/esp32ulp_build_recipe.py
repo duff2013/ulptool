@@ -231,7 +231,7 @@ def build_ulp(PATHS, ulp_sfiles, board_options, has_s_file):
     else:
         file_names_constant = gen_file_names_constant()
         with open(file_names_constant['sym'],"w") as fsym:
-            fsym.write(out)
+            fsym.write(out.decode('utf-8'))
         console_string += cmd[0] + '\r'
 
     ## Create LD export script and header file
@@ -302,7 +302,7 @@ def gen_assembly(PATHS):
                         ulpcc_files.append(file)
 
     except Exception as e:
-        print e
+        print(e)
 
     for file in ulpcc_files:
         cmd = gen_lcc_cmd(PATHS, file)
@@ -313,7 +313,7 @@ def gen_assembly(PATHS):
             sys.exit(error_string)
         else:
             if out == "":
-                print cmd[0]
+                print(cmd[0])
             else:
                 sys.exit(str(out))
 
