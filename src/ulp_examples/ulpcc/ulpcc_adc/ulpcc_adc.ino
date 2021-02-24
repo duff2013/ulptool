@@ -48,6 +48,6 @@ static void init_run_ulp(uint32_t usec) {
   // all shared ulp variables have to be intialized after ulptool_load_binary for the ulp to see it.
   // Set the high threshold reading you want the ulp to trigger a main processor wakeup.
   ulp_threshold = 0x20;
-  err = ulp_run((&ulp_entry - RTC_SLOW_MEM) / sizeof(uint32_t));
+  err = ulp_run(&ulp_entry - RTC_SLOW_MEM);
   if (err) Serial.println("Error Starting ULP Coprocessor");
 }

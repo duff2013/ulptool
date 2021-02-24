@@ -73,6 +73,6 @@ static void init_ulp_program()
 static void start_ulp_program()
 {
   /* Start the program */
-  esp_err_t err = ulp_run((&ulp_entry - RTC_SLOW_MEM) / sizeof(uint32_t));
+  esp_err_t err = ulp_run(&ulp_entry - RTC_SLOW_MEM);
   ESP_ERROR_CHECK(err);
 }
