@@ -71,7 +71,7 @@ static void init_run_ulp(uint32_t usec) {
     // use this binary loader instead
     esp_err_t err = ulptool_load_binary(0, ulp_main_bin_start, (ulp_main_bin_end - ulp_main_bin_start) / sizeof(uint32_t));
     // ulp coprocessor will run on its own now
-    err = ulp_run((&ulp_entry - RTC_SLOW_MEM) / sizeof(uint32_t));
+    err = ulp_run(&ulp_entry - RTC_SLOW_MEM);
 }
 ```
 
@@ -141,7 +141,7 @@ void loop() {
 static void init_run_ulp(uint32_t usec) {
   ulp_set_wakeup_period(0, usec);
   esp_err_t err = ulptool_load_binary(0, ulp_main_bin_start, (ulp_main_bin_end - ulp_main_bin_start) / sizeof(uint32_t));
-  err = ulp_run((&ulp_entry - RTC_SLOW_MEM) / sizeof(uint32_t));
+  err = ulp_run(&ulp_entry - RTC_SLOW_MEM);
 
   if (err) Serial.println("Error Starting ULP Coprocessor");
 }
