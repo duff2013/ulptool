@@ -16,6 +16,10 @@ compiler.c.elf.extra_flags="-L{build.path}/sketch/" -T ulp_main.ld "{build.path}
 ## add ulptool.h to g++
 compiler.cpp.extra_flags="-I{tools.ulptool.path}/include/ulptool"
 
+## copy '.s' (ulp) files from sketch to build folder if present
+recipe.hooks.core.postbuild.00.pattern=sh -c 'cd "{build.source.path}" && cp *.s "{build.path}/sketch" || true'
+recipe.hooks.core.postbuild.00.pattern.windows=cmd /C copy {build.source.path}\*.s "{build.path}\sketch" || exit 0
+
 ## compile '.s' (ulp) files
 recipe.hooks.core.postbuild.01.pattern={compiler.s.cmd} {compiler.cpreprocessor.flags} -b {build.path} -p {runtime.platform.path} -u {compiler.ulp.path} -x {compiler.path} -t {tools.ulptool.path} --DF_CPU={build.f_cpu} --DARDUINO={runtime.ide.version} --DARDUINO_={build.board} --DARDUINO_ARCH_={build.arch} --DARDUINO_BOARD="{build.board}" --DARDUINO_VARIANT="{build.variant}"
 
