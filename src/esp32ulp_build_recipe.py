@@ -164,17 +164,17 @@ def build_ulp(PATHS, ulp_sfiles, board_options, has_s_file):
 
     ## Get section memory sizes
     cmd = gen_binutils_size_cmd(PATHS)
-    proc = subprocess.Popen(cmd[1],stdout=subprocess.PIPE,stderr=subprocess.PIPE,shell=False)
+    proc = subprocess.Popen(cmd[1],stdout=subprocess.PIPE,stderr=subprocess.PIPE,shell=False,text=True)
     (out, err) = proc.communicate()
     if err:
         error_string = cmd[0] + '\r' + err
         sys.exit(error_string)
     else:
         try:
-            file_path = os.path.join(PATHS['core'], 'tools', 'sdk', 'include', 'config', 'sdkconfig.h' )
+            file_path = os.path.join(PATHS['core'], 'tools', 'sdk', 'esp32', 'qio_qspi', 'include', 'sdkconfig.h')
             with open(file_path, "r") as file: text = file.read()
 
-            mem = re.findall(r'#define CONFIG_ULP_COPROC_RESERVE_MEM (.*?)\n', text)[0]
+            mem = re.findall(r'#define CONFIG_ESP32_ULP_COPROC_RESERVE_MEM (.*?)\n', text)[0]
             SECTIONS = dict(re.findall('^(\.+[0-9a-zA-Z_]+)\s+([0-9]+)', out, re.MULTILINE))
             max    = 0.0
             text   = 0.0
@@ -265,7 +265,7 @@ def build_ulp(PATHS, ulp_sfiles, board_options, has_s_file):
         console_string += cmd[0] + '\r'
 
     ## Check if sdkconfig.h md5 hash has changed indicating the file has changed
-    sdk_hash = md5(os.path.join(PATHS['core'] , 'tools', 'sdk', 'include', 'config', 'sdkconfig.h'))
+    sdk_hash = md5(os.path.join(PATHS['core'], 'tools', 'sdk', 'esp32', 'qio_qspi', 'include', 'sdkconfig.h'))
     dict_hash = dict()
     with open(os.path.join(PATHS['ulptool'], 'hash.json'), 'r') as file:
         dict_hash = json.load(file)
