@@ -124,7 +124,7 @@ def build_ulp(PATHS, ulp_sfiles, board_options, has_s_file):
 
         ## Run each assembly file (foo.S) through C preprocessor
         cmd = gen_xtensa_preprocessor_cmd(PATHS, file, board_options)
-        proc = subprocess.Popen(cmd[1],stdout=subprocess.PIPE,stderr=subprocess.STDOUT,shell=False)
+        proc = subprocess.Popen(cmd[1],stdout=subprocess.PIPE,stderr=subprocess.STDOUT,shell=False,text=True)
         (out, err) = proc.communicate()
         if err:
             error_string = cmd[0] + '\r' + err
@@ -134,7 +134,7 @@ def build_ulp(PATHS, ulp_sfiles, board_options, has_s_file):
 
         ## Run preprocessed assembly sources through assembler
         cmd = gen_binutils_as_cmd(PATHS, file)
-        proc = subprocess.Popen(cmd[1],stdout=subprocess.PIPE,stderr=subprocess.PIPE,shell=False)
+        proc = subprocess.Popen(cmd[1],stdout=subprocess.PIPE,stderr=subprocess.PIPE,shell=False,text=True)
         (out, err) = proc.communicate()
         if err:
             error_string = cmd[0] + '\r' + err
@@ -144,7 +144,7 @@ def build_ulp(PATHS, ulp_sfiles, board_options, has_s_file):
 
     ## Run linker script template through C preprocessor
     cmd = gen_xtensa_ld_cmd(PATHS, ulp_sfiles, board_options)
-    proc = subprocess.Popen(cmd[1],stdout=subprocess.PIPE,stderr=subprocess.PIPE,shell=False)
+    proc = subprocess.Popen(cmd[1],stdout=subprocess.PIPE,stderr=subprocess.PIPE,shell=False,text=True)
     (out, err) = proc.communicate()
     if err:
         error_string = cmd[0] + '\r' + err
@@ -154,7 +154,7 @@ def build_ulp(PATHS, ulp_sfiles, board_options, has_s_file):
 
     ## Link object files into an output ELF file
     cmd = gen_binutils_ld_cmd(PATHS, ulp_sfiles)
-    proc = subprocess.Popen(cmd[1],stdout=subprocess.PIPE,stderr=subprocess.PIPE,shell=False)
+    proc = subprocess.Popen(cmd[1],stdout=subprocess.PIPE,stderr=subprocess.PIPE,shell=False,text=True)
     (out, err) = proc.communicate()
     if err:
         error_string = cmd[0] + '\r' + err
@@ -164,17 +164,17 @@ def build_ulp(PATHS, ulp_sfiles, board_options, has_s_file):
 
     ## Get section memory sizes
     cmd = gen_binutils_size_cmd(PATHS)
-    proc = subprocess.Popen(cmd[1],stdout=subprocess.PIPE,stderr=subprocess.PIPE,shell=False)
+    proc = subprocess.Popen(cmd[1],stdout=subprocess.PIPE,stderr=subprocess.PIPE,shell=False,text=True)
     (out, err) = proc.communicate()
     if err:
         error_string = cmd[0] + '\r' + err
         sys.exit(error_string)
     else:
         try:
-            file_path = os.path.join(PATHS['core'], 'tools', 'sdk', 'include', 'config', 'sdkconfig.h' )
+            file_path = os.path.join(PATHS['core'], 'tools', 'sdk', 'esp32', 'qio_qspi', 'include', 'sdkconfig.h')
             with open(file_path, "r") as file: text = file.read()
 
-            mem = re.findall(r'#define CONFIG_ULP_COPROC_RESERVE_MEM (.*?)\n', text)[0]
+            mem = re.findall(r'#define CONFIG_ESP32_ULP_COPROC_RESERVE_MEM (.*?)\n', text)[0]
             SECTIONS = dict(re.findall('^(\.+[0-9a-zA-Z_]+)\s+([0-9]+)', out, re.MULTILINE))
             max    = 0.0
             text   = 0.0
@@ -223,7 +223,7 @@ def build_ulp(PATHS, ulp_sfiles, board_options, has_s_file):
 
     ## Generate list of global symbols
     cmd = gen_binutils_nm_cmd(PATHS)
-    proc = subprocess.Popen(cmd[1],stdout=subprocess.PIPE,stderr=subprocess.PIPE,shell=False)
+    proc = subprocess.Popen(cmd[1],stdout=subprocess.PIPE,stderr=subprocess.PIPE,shell=False,text=True)
     (out, err) = proc.communicate()
     if err:
         error_string = cmd[0] + '\r' + err
@@ -231,12 +231,12 @@ def build_ulp(PATHS, ulp_sfiles, board_options, has_s_file):
     else:
         file_names_constant = gen_file_names_constant()
         with open(file_names_constant['sym'],"w") as fsym:
-            fsym.write(out.decode('utf-8'))
+            fsym.write(out)
         console_string += cmd[0] + '\r'
 
     ## Create LD export script and header file
     cmd = gen_mapgen_cmd(PATHS)
-    proc = subprocess.Popen(cmd[1],stdout=subprocess.PIPE,stderr=subprocess.PIPE,shell=False)
+    proc = subprocess.Popen(cmd[1],stdout=subprocess.PIPE,stderr=subprocess.PIPE,shell=False,text=True)
     (out, err) = proc.communicate()
     if err:
         error_string = cmd[0] + '\r' + err
@@ -246,7 +246,7 @@ def build_ulp(PATHS, ulp_sfiles, board_options, has_s_file):
 
     ## Add the generated binary to the list of binary files
     cmd = gen_binutils_objcopy_cmd(PATHS)
-    proc = subprocess.Popen(cmd[1],stdout=subprocess.PIPE,stderr=subprocess.PIPE,shell=False)
+    proc = subprocess.Popen(cmd[1],stdout=subprocess.PIPE,stderr=subprocess.PIPE,shell=False,text=True)
     (out, err) = proc.communicate()
     if err:
         error_string = cmd[0] + '\r' + err
@@ -256,7 +256,7 @@ def build_ulp(PATHS, ulp_sfiles, board_options, has_s_file):
 
     ## Add the generated binary to the list of binary files
     cmd = gen_xtensa_objcopy_cmd(PATHS)
-    proc = subprocess.Popen(cmd[1],stdout=subprocess.PIPE,stderr=subprocess.PIPE,shell=False)
+    proc = subprocess.Popen(cmd[1],stdout=subprocess.PIPE,stderr=subprocess.PIPE,shell=False,text=True)
     (out, err) = proc.communicate()
     if err:
         error_string = cmd[0] + '\r' + err
@@ -265,7 +265,7 @@ def build_ulp(PATHS, ulp_sfiles, board_options, has_s_file):
         console_string += cmd[0] + '\r'
 
     ## Check if sdkconfig.h md5 hash has changed indicating the file has changed
-    sdk_hash = md5(os.path.join(PATHS['core'] , 'tools', 'sdk', 'include', 'config', 'sdkconfig.h'))
+    sdk_hash = md5(os.path.join(PATHS['core'], 'tools', 'sdk', 'esp32', 'qio_qspi', 'include', 'sdkconfig.h'))
     dict_hash = dict()
     with open(os.path.join(PATHS['ulptool'], 'hash.json'), 'r') as file:
         dict_hash = json.load(file)
@@ -275,7 +275,7 @@ def build_ulp(PATHS, ulp_sfiles, board_options, has_s_file):
             file.write(json.dumps(dict_hash))
         ## Run esp32.ld thru the c preprocessor generating esp32_out.ld
         cmd = gen_xtensa_ld_preprocessor_cmd(PATHS)
-        proc = subprocess.Popen(cmd[1],stdout=subprocess.PIPE,stderr=subprocess.STDOUT,shell=False)
+        proc = subprocess.Popen(cmd[1],stdout=subprocess.PIPE,stderr=subprocess.STDOUT,shell=False,text=True)
         (out, err) = proc.communicate()
         if err:
             error_string = cmd[0] + '\r' + err
@@ -306,7 +306,7 @@ def gen_assembly(PATHS):
 
     for file in ulpcc_files:
         cmd = gen_lcc_cmd(PATHS, file)
-        proc = subprocess.Popen(cmd[1],stdout=subprocess.PIPE,stderr=subprocess.STDOUT,shell=False)
+        proc = subprocess.Popen(cmd[1],stdout=subprocess.PIPE,stderr=subprocess.STDOUT,shell=False,text=True)
         (out, err) = proc.communicate()
         if err:
             error_string = cmd[0] + '\r' + err
